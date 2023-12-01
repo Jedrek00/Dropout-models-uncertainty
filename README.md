@@ -21,3 +21,10 @@ All code should be ran in the env created by the poetry. To ensure that you are 
 ```
 poetry shell
 ```
+
+## Installing new modules
+Instead of using *pip install module_name*
+Use:
+```
+poetry add module_name
+```
