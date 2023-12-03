@@ -18,7 +18,7 @@ NUM_OF_CLASSES = 10
 DROPOUT_PROB = 0.2
 
 
-def train_model(model: torch.nn.Module, train_dataloader: DataLoader, test_dataloader: DataLoader, device: str, test_labels: np.array):
+def train_model(model: torch.nn.Module, train_dataloader: DataLoader, test_dataloader: DataLoader, device: str, test_labels: np.ndarray):
     loss_fn = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.AdamW(model.parameters(), lr=LR)
     # optimizer = torch.optim.SGD(model.parameters(), lr=LR, momentum=0.9)
@@ -69,7 +69,7 @@ def main():
     print(f"Number of batches in train set: {len(trainloader)}")
     print(f"Number of batches in test set: {len(testloader)}")
 
-    model = DenseNet(IMG_SIZE*IMG_SIZE*NUM_CHANNELS, NUM_OF_CLASSES, [512, 256, 128], p=DROPOUT_PROB)
+    model = DenseNet(IMG_SIZE*IMG_SIZE*NUM_CHANNELS, NUM_OF_CLASSES, [512, 256, 128], DROPOUT_PROB)
     model.to(device)
     train_model(model, trainloader, testloader, device, test_labels)
 
