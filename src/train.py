@@ -101,9 +101,9 @@ def main():
     print(f"Number of batches in train set: {len(trainloader)}")
     print(f"Number of batches in test set: {len(testloader)}")
 
-    model = DenseNet(IMG_SIZE*IMG_SIZE*NUM_CHANNELS, NUM_OF_CLASSES, [512, 256, 128], DROPOUT_PROB)
-    # model = ConvNet(image_channels=NUM_CHANNELS, use_standard_dropout=False, use_spatial_dropout=False, use_cutout_dropout=False)
-    # model = ConvNet(image_channels=NUM_CHANNELS, use_standard_dropout=True, use_spatial_dropout=False, use_cutout_dropout=False, dropout_rate=0.5)
+    # model = DenseNet(IMG_SIZE*IMG_SIZE*NUM_CHANNELS, NUM_OF_CLASSES, [512, 256, 128], DROPOUT_PROB)
+    model = ConvNet(image_channels=NUM_CHANNELS, image_size=IMG_SIZE, filters=[32, 64, 128], kernel_sizes=[(3, 3), (3, 3), (3, 3)], use_standard_dropout=False, use_spatial_dropout=False, use_cutout_dropout=False)
+    # model = ConvNet(image_channels=NUM_CHANNELS, image_size=IMG_SIZE, filters=[32, 64, 128], kernel_sizes=[(3, 3), (3, 3), (3, 3)], use_standard_dropout=True, use_spatial_dropout=False, use_cutout_dropout=False, dropout_rate=0.5)
     model.to(device)
     history = train_model(model, trainloader, testloader, device, test_labels)
     plot_history(history)
