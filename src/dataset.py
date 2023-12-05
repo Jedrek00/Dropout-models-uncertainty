@@ -1,5 +1,4 @@
 import os
-
 from torchvision import datasets
 
 
@@ -12,13 +11,12 @@ class Dataset:
     def __init__(self, type="cifar"):
         self.path = "../data"
         self.dataset_info = Dataset.types[type]
-        self.dataset_path = f"{self.path}/{self.dataset_info['directory']}"
+        self.dataset_path = os.path.join(self.path, self.dataset_info['directory'])
 
-        self.train_dataset = self.create_dataset(True)
-        self.test_dataset = self.create_dataset(False)
+        self.train_dataset = self.create_dataset(train=True)
+        self.test_dataset = self.create_dataset(train=False)
 
-    def create_dataset(self, train):
+    def create_dataset(self, train: bool):
         return self.dataset_info["instance"](
             root=self.path, train=train, download=True, transform=None
         )
-    
