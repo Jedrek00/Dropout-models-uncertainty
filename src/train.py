@@ -1,5 +1,6 @@
 import numpy as np
 from tqdm import tqdm
+import matplotlib.pyplot as plt
 import torch
 from torch.utils.data import DataLoader
 
@@ -24,7 +25,6 @@ DROPOUT_PROB = 0.2
 
 
 def plot_history(history: dict):
-    import matplotlib.pyplot as plt
     x = range(len(history['train_loss']))
     plt.figure(figsize=(10, 7))
     plt.subplot(121)
