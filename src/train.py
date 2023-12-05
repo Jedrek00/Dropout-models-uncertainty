@@ -1,5 +1,8 @@
+import os
+from typing import Optional
 import numpy as np
 from tqdm import tqdm
+import mlflow
 import matplotlib.pyplot as plt
 import torch
 from torch.utils.data import DataLoader
@@ -10,6 +13,7 @@ from densenet import DenseNet
 
 
 DATA_PATH = "data"
+PLOTS_PATH = "plots"
 # cifar or fashion
 DATASET = "cifar"
 # DATASET = "fashion"
@@ -17,14 +21,14 @@ IMG_SIZE = 32
 # IMG_SIZE = 28
 NUM_CHANNELS = 3
 # NUM_CHANNELS = 1
-BATCH_SIZE = 128
-EPOCHS = 10
+BATCH_SIZE = 64
+EPOCHS = 100
 LR = 0.001
 NUM_OF_CLASSES = 10
 DROPOUT_PROB = 0.2
 
 
-def plot_history(history: dict):
+def plot_history(history: dict, filename: Optional[str] = None):
     x = range(len(history['train_loss']))
     plt.figure(figsize=(10, 7))
     plt.subplot(121)
@@ -37,6 +41,8 @@ def plot_history(history: dict):
     plt.plot(x, history['val_acc'], label='val_acc')
     plt.legend()
     plt.title('Accuracy')
+    if filename is not None:
+        plt.savefig(os.path.join(PLOTS_PATH, filename))
     plt.show()
 
 
@@ -101,12 +107,42 @@ def main():
     print(f"Number of batches in train set: {len(trainloader)}")
     print(f"Number of batches in test set: {len(testloader)}")
 
-    model = DenseNet(IMG_SIZE*IMG_SIZE*NUM_CHANNELS, NUM_OF_CLASSES, [512, 256, 128], DROPOUT_PROB)
-    # model = ConvNet(image_channels=NUM_CHANNELS, use_standard_dropout=False, use_spatial_dropout=False, use_cutout_dropout=False)
+    # model = DenseNet(IMG_SIZE*IMG_SIZE*NUM_CHANNELS, NUM_OF_CLASSES, [512, 256, 128], DROPOUT_PROB)
+    model = ConvNet(use_standard_dropout=False, use_spatial_dropout=False, use_cutout_dropout=False)
     # model = ConvNet(image_channels=NUM_CHANNELS, use_standard_dropout=True, use_spatial_dropout=False, use_cutout_dropout=False, dropout_rate=0.5)
     model.to(device)
-    history = train_model(model, trainloader, testloader, device, test_labels)
-    plot_history(history)
+
+    mlflow.set_experiment("Dropout for uncertainty estimation")
+
+    with mlflow.start_run() as run:
+        # saving tags
+        mlflow.set_tag("dataset", DATASET)
+        mlflow.set_tag("trainset_len", len(dataset.train_dataset.data))
+        mlflow.set_tag("testset_len", len(dataset.test_dataset.data))
+        if isinstance(model, DenseNet):
+            mlflow.set_tag("model_type", "Dense")
+        else:
+            mlflow.set_tag("model_type", "CNN")
+        # TODO mlflow.set_tag("dropout", dropout)
+
+        # saving parameters
+        mlflow.log_param("lr", LR)
+        mlflow.log_param("batch_size", BATCH_SIZE)
+        mlflow.log_param("epochs", EPOCHS)
+        mlflow.log_param("dropout_rate", DROPOUT_PROB)
+        
+        history = train_model(model, trainloader, testloader, device, test_labels)
+        plot_name = run.info.run_name + ".png"
+        plot_history(history, filename=plot_name)
+
+        # saving metrics
+        mlflow.log_metric("train_loss", history["train_loss"][-1])
+        mlflow.log_metric("val_loss", history["val_loss"][-1])
+        mlflow.log_metric("train_acc", history["train_acc"][-1])
+        mlflow.log_metric("train_acc", history["val_acc"][-1])
+
+        # saving plot
+        mlflow.log_artifact(os.path.join(PLOTS_PATH, plot_name))
 
 
 if __name__ == "__main__":
