@@ -57,11 +57,9 @@ def main():
     print(f"{device} will be used for training")
 
     dataset = Dataset(type=DATASET)
-    trainset = dataset.create_dataset(train=True)
-    testset = dataset.create_dataset(train=False)
-    trainloader = DataLoader(trainset, batch_size=BATCH_SIZE, shuffle=True)
-    testloader = DataLoader(testset, batch_size=BATCH_SIZE, shuffle=False)
-    test_labels = np.array(testset.targets)
+    trainloader = DataLoader(dataset.train_dataset, batch_size=BATCH_SIZE, shuffle=True)
+    testloader = DataLoader(dataset.test_dataset, batch_size=BATCH_SIZE, shuffle=False)
+    test_labels = np.array(dataset.test_dataset.targets)
 
     print(f"Number of batches in train set: {len(trainloader)}")
     print(f"Number of batches in test set: {len(testloader)}")
