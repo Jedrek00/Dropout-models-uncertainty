@@ -1,4 +1,5 @@
 import os
+from typing import Union
 from torchvision import datasets
 import torchvision.transforms as transforms
 
@@ -22,7 +23,7 @@ class Dataset:
         self.train_dataset = self.create_dataset(train=True)
         self.test_dataset = self.create_dataset(train=False)
 
-    def create_dataset(self, train: bool):
+    def create_dataset(self, train: bool) -> Union[datasets.CIFAR10, datasets.FashionMNIST]:
         return self.dataset_info["instance"](
             root=self.path, train=train, download=True, transform=Dataset.transform
         )
