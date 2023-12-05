@@ -3,6 +3,8 @@ from tqdm import tqdm
 import torch
 from torch.utils.data import DataLoader
 
+from dataset import Dataset
+from convnet import ConvNet
 from densenet import DenseNet
 from dataset import Dataset
 
@@ -64,9 +66,12 @@ def main():
     print(f"Number of batches in train set: {len(trainloader)}")
     print(f"Number of batches in test set: {len(testloader)}")
 
-    model = DenseNet(IMG_SIZE*IMG_SIZE*NUM_CHANNELS, NUM_OF_CLASSES, [512, 256, 128], DROPOUT_PROB)
+    # model = DenseNet(IMG_SIZE*IMG_SIZE*NUM_CHANNELS, NUM_OF_CLASSES, [512, 256, 128], DROPOUT_PROB)
+    model = ConvNet(use_standard_dropout=False, use_spatial_dropout=False, use_cutout_dropout=False)
+    # model = ConvNet(use_standard_dropout=True, use_spatial_dropout=False, use_cutout_dropout=False, dropout_rate=0.5)
     model.to(device)
     train_model(model, trainloader, testloader, device, test_labels)
+
 
 if __name__ == "__main__":
     main()
