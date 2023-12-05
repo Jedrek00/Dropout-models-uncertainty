@@ -1,27 +1,22 @@
 import os
-import torchvision.datasets as datasets
+from torchvision import datasets
 
 
 class Dataset:
-    def __init__(self, replace=False):
-        self.path = "../data"
-        self.replace = replace
-        self.dataset = self.create_dataset()
-        print(self.dataset)
+    types = {
+        "cifar": {"directory": "cifar-10-batches-py", "instance": datasets.CIFAR10},
+        "fashion": {"directory": "FashionMNIST", "instance": datasets.FashionMNIST},
+    }
 
-    def create_dataset(self):
-        if (
-            self.replace
-            or not os.path.exists(self.path)
-            or not len(os.listdir(self.path)) > 0
-        ):
-            return datasets.CIFAR10(
-                root=self.path, train=False, download=True, transform=None
-            )
-        else:
-            if os.path.exists("../data/cifar-10-batches-py"):
-                return datasets.CIFAR10(
-                    root=self.path, train=False, download=False, transform=None
-                )
-            else:
-                raise "Corrupted folder"
+    def __init__(self, type="cifar"):
+        self.path = "../data"
+        self.dataset_info = Dataset.types[type]
+        self.dataset_path = os.path.join(self.path, self.dataset_info['directory'])
+
+        self.train_dataset = self.create_dataset(train=True)
+        self.test_dataset = self.create_dataset(train=False)
+
+    def create_dataset(self, train: bool):
+        return self.dataset_info["instance"](
+            root=self.path, train=train, download=True, transform=None
+        )
