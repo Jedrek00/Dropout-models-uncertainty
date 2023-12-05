@@ -6,7 +6,6 @@ from torch.utils.data import DataLoader
 from dataset import Dataset
 from convnet import ConvNet
 from densenet import DenseNet
-from dataset import Dataset
 
 
 DATA_PATH = "data"
