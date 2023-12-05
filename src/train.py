@@ -1,20 +1,21 @@
 import numpy as np
 from tqdm import tqdm
 import torch
-import torchvision
-import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 
 from dataset import Dataset
 from convnet import ConvNet
 from densenet import DenseNet
+from dataset import Dataset
 
 
 DATA_PATH = "data"
+# cifar or fashion
+DATASET = "cifar"
 IMG_SIZE = 32
 NUM_CHANNELS = 3
 BATCH_SIZE = 128
-EPOCHS = 100
+EPOCHS = 10
 LR = 0.001
 NUM_OF_CLASSES = 10
 DROPOUT_PROB = 0.2
@@ -54,19 +55,13 @@ def train_model(model: torch.nn.Module, train_dataloader: DataLoader, test_datal
 
 
 def main():
-    transform = transforms.Compose(
-        [transforms.ToTensor(),
-        #transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
-        ])
-
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     print(f"{device} will be used for training")
 
-    trainset = torchvision.datasets.CIFAR10(root=DATA_PATH, train=True, download=False, transform=transform)
-    testset = torchvision.datasets.CIFAR10(root=DATA_PATH, train=False, download=False, transform=transform)
-    trainloader = DataLoader(trainset, batch_size=BATCH_SIZE, shuffle=True)
-    testloader = DataLoader(testset, batch_size=BATCH_SIZE, shuffle=False)
-    test_labels = np.array(testset.targets)
+    dataset = Dataset(type=DATASET)
+    trainloader = DataLoader(dataset.train_dataset, batch_size=BATCH_SIZE, shuffle=True)
+    testloader = DataLoader(dataset.test_dataset, batch_size=BATCH_SIZE, shuffle=False)
+    test_labels = np.array(dataset.test_dataset.targets)
 
     print(f"Number of batches in train set: {len(trainloader)}")
     print(f"Number of batches in test set: {len(testloader)}")

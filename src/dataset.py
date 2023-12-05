@@ -1,27 +1,29 @@
 import os
-import torchvision.datasets as datasets
+from typing import Union
+from torchvision import datasets
+import torchvision.transforms as transforms
 
 
 class Dataset:
-    def __init__(self, replace=False):
-        self.path = "../data"
-        self.replace = replace
-        self.dataset = self.create_dataset()
-        print(self.dataset)
+    types = {
+        "cifar": {"directory": "cifar-10-batches-py", "instance": datasets.CIFAR10},
+        "fashion": {"directory": "FashionMNIST", "instance": datasets.FashionMNIST},
+    }
 
-    def create_dataset(self):
-        if (
-            self.replace
-            or not os.path.exists(self.path)
-            or not len(os.listdir(self.path)) > 0
-        ):
-            return datasets.CIFAR10(
-                root=self.path, train=False, download=True, transform=None
-            )
-        else:
-            if os.path.exists("../data/cifar-10-batches-py"):
-                return datasets.CIFAR10(
-                    root=self.path, train=False, download=False, transform=None
-                )
-            else:
-                raise "Corrupted folder"
+    transform = transforms.Compose(
+        [transforms.ToTensor(),
+        #transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+        ])
+
+    def __init__(self, type="cifar"):
+        self.path = "../data"
+        self.dataset_info = Dataset.types[type]
+        self.dataset_path = os.path.join(self.path, self.dataset_info['directory'])
+
+        self.train_dataset = self.create_dataset(train=True)
+        self.test_dataset = self.create_dataset(train=False)
+
+    def create_dataset(self, train: bool) -> Union[datasets.CIFAR10, datasets.FashionMNIST]:
+        return self.dataset_info["instance"](
+            root=self.path, train=train, download=True, transform=Dataset.transform
+        )
