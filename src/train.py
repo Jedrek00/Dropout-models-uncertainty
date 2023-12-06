@@ -120,7 +120,7 @@ def main():
     model.to(device)
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=LR)
-    optimizer = torch.optim.SGD(model.parameters(), lr=LR, momentum=0.9)
+    # optimizer = torch.optim.SGD(model.parameters(), lr=LR, momentum=0.9)
 
     mlflow.set_experiment("Dropout for uncertainty estimation")
 
