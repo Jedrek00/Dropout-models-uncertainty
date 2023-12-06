@@ -23,6 +23,9 @@ class Dataset:
         self.train_dataset = self.create_dataset(train=True)
         self.test_dataset = self.create_dataset(train=False)
 
+        self.num_channels = len(self.train_dataset[0][0])
+        self.img_size = len(self.train_dataset[0][0][0])
+
     def create_dataset(self, train: bool) -> Union[datasets.CIFAR10, datasets.FashionMNIST]:
         return self.dataset_info["instance"](
             root=self.path, train=train, download=True, transform=Dataset.transform

@@ -16,12 +16,8 @@ DATA_PATH = "data"
 PLOTS_PATH = "plots"
 MODELS_PATH = "models"
 # cifar or fashion
-DATASET = "cifar"
-# DATASET = "fashion"
-IMG_SIZE = 32
-# IMG_SIZE = 28
-NUM_CHANNELS = 3
-# NUM_CHANNELS = 1
+# DATASET = "cifar"
+DATASET = "fashion"
 BATCH_SIZE = 64
 EPOCHS = 2
 LR = 0.001
@@ -105,9 +101,12 @@ def main():
     print(f"{device} will be used for training")
 
     dataset = Dataset(type=DATASET)
+    NUM_CHANNELS = dataset.num_channels
+    IMG_SIZE = dataset.img_size
     trainloader = DataLoader(dataset.train_dataset, batch_size=BATCH_SIZE, shuffle=True)
     testloader = DataLoader(dataset.test_dataset, batch_size=BATCH_SIZE, shuffle=False)
     test_labels = np.array(dataset.test_dataset.targets)
+
 
     print(f"Number of batches in train set: {len(trainloader)}")
     print(f"Number of batches in test set: {len(testloader)}")
