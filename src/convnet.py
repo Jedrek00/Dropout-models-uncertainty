@@ -20,14 +20,6 @@ class ConvNet(nn.Module):
         if len(kernel_sizes) != 3:
             raise Exception('Use 3 kernel sizes!')
 
-        # if use_standard_dropout + use_spatial_dropout + use_cutout_dropout > 1:
-        #     raise Exception("Use only one dropout")
-        # elif use_standard_dropout + use_spatial_dropout + use_cutout_dropout == 1:
-        #     self.any_dropout = True
-        #     self.dropout_rate = dropout_rate
-        # else:
-        #     self.any_dropout = False
-
         if dropout_type is None:
             self.any_dropout = False
         else:

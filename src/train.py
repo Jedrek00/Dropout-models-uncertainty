@@ -16,14 +16,10 @@ DATA_PATH = "data"
 PLOTS_PATH = "plots"
 MODELS_PATH = "models"
 # cifar or fashion
-DATASET = "cifar"
-# DATASET = "fashion"
-IMG_SIZE = 32
-# IMG_SIZE = 28
-NUM_CHANNELS = 3
-# NUM_CHANNELS = 1
+# DATASET = "cifar"
+DATASET = "fashion"
 BATCH_SIZE = 64
-EPOCHS = 10
+EPOCHS = 2
 LR = 0.001
 NUM_OF_CLASSES = 10
 DROPOUT_PROB = 0.2
@@ -33,12 +29,12 @@ DROPOUT_TYPE = "standard"
 def plot_history(history: dict, filename: Optional[str] = None):
     x = range(len(history['train_loss']))
     plt.figure(figsize=(10, 7))
-    plt.subplot(121)
+    plt.subplot(211)
     plt.plot(x, history['train_loss'], label='train_loss')
     plt.plot(x, history['val_loss'], label='val_loss')
     plt.legend()
     plt.title('Loss')
-    plt.subplot(122)
+    plt.subplot(212)
     plt.plot(x, history['train_acc'], label='train_acc')
     plt.plot(x, history['val_acc'], label='val_acc')
     plt.legend()
@@ -105,9 +101,12 @@ def main():
     print(f"{device} will be used for training")
 
     dataset = Dataset(type=DATASET)
+    NUM_CHANNELS = dataset.num_channels
+    IMG_SIZE = dataset.img_size
     trainloader = DataLoader(dataset.train_dataset, batch_size=BATCH_SIZE, shuffle=True)
     testloader = DataLoader(dataset.test_dataset, batch_size=BATCH_SIZE, shuffle=False)
     test_labels = np.array(dataset.test_dataset.targets)
+
 
     print(f"Number of batches in train set: {len(trainloader)}")
     print(f"Number of batches in test set: {len(testloader)}")
