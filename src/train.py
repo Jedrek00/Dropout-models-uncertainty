@@ -14,6 +14,7 @@ from densenet import DenseNet
 
 DATA_PATH = "data"
 PLOTS_PATH = "plots"
+MODELS_PATH = "models"
 # cifar or fashion
 DATASET = "cifar"
 # DATASET = "fashion"
@@ -22,10 +23,11 @@ IMG_SIZE = 32
 NUM_CHANNELS = 3
 # NUM_CHANNELS = 1
 BATCH_SIZE = 64
-EPOCHS = 100
+EPOCHS = 10
 LR = 0.001
 NUM_OF_CLASSES = 10
 DROPOUT_PROB = 0.2
+DROPOUT_TYPE = "standard"
 
 
 def plot_history(history: dict, filename: Optional[str] = None):
@@ -46,16 +48,15 @@ def plot_history(history: dict, filename: Optional[str] = None):
     plt.show()
 
 
-def train_model(model: torch.nn.Module, train_dataloader: DataLoader, test_dataloader: DataLoader, device: str, test_labels: np.ndarray):
+def train_model(model: torch.nn.Module, optimizer, train_dataloader: DataLoader, test_dataloader: DataLoader, device: str, test_labels: np.ndarray):
     loss_fn = torch.nn.CrossEntropyLoss()
-    optimizer = torch.optim.AdamW(model.parameters(), lr=LR)
-    # optimizer = torch.optim.SGD(model.parameters(), lr=LR, momentum=0.9)
     history = {
         'train_loss': [],
         'val_loss': [],
         'train_acc': [],
         'val_acc': []
     }
+    best_acc = 0
     for epoch in range(EPOCHS):
         with tqdm(train_dataloader, unit="batch", total=len(train_dataloader)) as tepoch:
             tepoch.set_description(f"[Epoch {epoch+1}] Training:")
@@ -90,9 +91,13 @@ def train_model(model: torch.nn.Module, train_dataloader: DataLoader, test_datal
                     val_loss_epoch.append(loss.item())
                     if i % 50 == 0:
                         tepoch.set_postfix(loss=loss.item(), accuracy=np.equal(preds, labels.cpu().numpy()).mean())
+            acc = np.equal(all_preds, test_labels).mean()
             history['val_loss'].append(np.mean(val_loss_epoch))
-            history['val_acc'].append(np.equal(all_preds, test_labels).mean())
-            print(f"[Epoch {epoch+1}] Accuracy on test data: {np.equal(all_preds, test_labels).mean()}")
+            history['val_acc'].append(acc)
+            print(f"[Epoch {epoch+1}] Accuracy on test data: {acc}")
+            if acc > best_acc:
+                best_acc = acc
+                torch.save(model, os.path.join(MODELS_PATH, "model2.pt"))
     return history
 
 def main():
@@ -107,10 +112,14 @@ def main():
     print(f"Number of batches in train set: {len(trainloader)}")
     print(f"Number of batches in test set: {len(testloader)}")
 
-    # model = DenseNet(IMG_SIZE*IMG_SIZE*NUM_CHANNELS, NUM_OF_CLASSES, [512, 256, 128], DROPOUT_PROB)
-    model = ConvNet(use_standard_dropout=False, use_spatial_dropout=False, use_cutout_dropout=False)
+    # model = torch.load(os.path.join(MODELS_PATH, "model.pt"))
+    # model = DenseNet(IMG_SIZE*IMG_SIZE*NUM_CHANNELS, NUM_OF_CLASSES, [512, 256, 128], DROPOUT_PROB, DROPOUT_TYPE)
+    model = ConvNet(DROPOUT_TYPE)
     # model = ConvNet(image_channels=NUM_CHANNELS, use_standard_dropout=True, use_spatial_dropout=False, use_cutout_dropout=False, dropout_rate=0.5)
     model.to(device)
+
+    optimizer = torch.optim.AdamW(model.parameters(), lr=LR)
+    optimizer = torch.optim.SGD(model.parameters(), lr=LR, momentum=0.9)
 
     mlflow.set_experiment("Dropout for uncertainty estimation")
 
@@ -123,15 +132,17 @@ def main():
             mlflow.set_tag("model_type", "Dense")
         else:
             mlflow.set_tag("model_type", "CNN")
-        # TODO mlflow.set_tag("dropout", dropout)
+        mlflow.set_tag("optimizer", optimizer.__class__.__name__)
+        mlflow.set_tag("dropout", DROPOUT_TYPE)
 
         # saving parameters
         mlflow.log_param("lr", LR)
         mlflow.log_param("batch_size", BATCH_SIZE)
         mlflow.log_param("epochs", EPOCHS)
         mlflow.log_param("dropout_rate", DROPOUT_PROB)
+        # TODO save number and sizes of layers for desne and filters for CNN
         
-        history = train_model(model, trainloader, testloader, device, test_labels)
+        history = train_model(model, optimizer, trainloader, testloader, device, test_labels)
         plot_name = run.info.run_name + ".png"
         plot_history(history, filename=plot_name)
 
@@ -139,10 +150,12 @@ def main():
         mlflow.log_metric("train_loss", history["train_loss"][-1])
         mlflow.log_metric("val_loss", history["val_loss"][-1])
         mlflow.log_metric("train_acc", history["train_acc"][-1])
-        mlflow.log_metric("train_acc", history["val_acc"][-1])
+        mlflow.log_metric("val_acc", history["val_acc"][-1])
 
         # saving plot
         mlflow.log_artifact(os.path.join(PLOTS_PATH, plot_name))
+
+        # TODO save models
 
 
 if __name__ == "__main__":
