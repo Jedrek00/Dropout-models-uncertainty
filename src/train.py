@@ -114,8 +114,9 @@ def main():
 
     # model = torch.load(os.path.join(MODELS_PATH, "model.pt"))
     # model = DenseNet(IMG_SIZE*IMG_SIZE*NUM_CHANNELS, NUM_OF_CLASSES, [512, 256, 128], DROPOUT_PROB, DROPOUT_TYPE)
-    model = ConvNet(DROPOUT_TYPE)
-    # model = ConvNet(image_channels=NUM_CHANNELS, use_standard_dropout=True, use_spatial_dropout=False, use_cutout_dropout=False, dropout_rate=0.5)
+    model = ConvNet(image_channels=NUM_CHANNELS, image_size=IMG_SIZE, filters=[32, 64, 128], kernel_sizes=[(3, 3), (3, 3), (3, 3)], dropout_type=DROPOUT_TYPE)
+    # model = ConvNet(image_channels=NUM_CHANNELS, image_size=IMG_SIZE, filters=[32, 64, 128], kernel_sizes=[(3, 3), (3, 3), (3, 3)], dropout_type=DROPOUT_TYPE, dropout_rate=0.5)
+
     model.to(device)
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=LR)
