@@ -23,7 +23,7 @@ IMG_SIZE = 32
 NUM_CHANNELS = 3
 # NUM_CHANNELS = 1
 BATCH_SIZE = 64
-EPOCHS = 10
+EPOCHS = 2
 LR = 0.001
 NUM_OF_CLASSES = 10
 DROPOUT_PROB = 0.2
@@ -33,12 +33,12 @@ DROPOUT_TYPE = "standard"
 def plot_history(history: dict, filename: Optional[str] = None):
     x = range(len(history['train_loss']))
     plt.figure(figsize=(10, 7))
-    plt.subplot(121)
+    plt.subplot(211)
     plt.plot(x, history['train_loss'], label='train_loss')
     plt.plot(x, history['val_loss'], label='val_loss')
     plt.legend()
     plt.title('Loss')
-    plt.subplot(122)
+    plt.subplot(212)
     plt.plot(x, history['train_acc'], label='train_acc')
     plt.plot(x, history['val_acc'], label='val_acc')
     plt.legend()
