@@ -2,3 +2,5 @@ Notebooks/.ipynb_checkpoints/
 .idea/
 data/
 *.pyc
+mlruns/
+plots/
