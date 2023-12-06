@@ -1,26 +1,36 @@
+from typing import Optional
 import torch
 from torch import nn
 import torch.nn.functional as F
 
+class DropoutTypeException(Exception):
+    pass
+
 
 class ConvNet(nn.Module):
     def __init__(self,
-                 use_standard_dropout: bool = False,
-                 use_spatial_dropout: bool = False,
-                 use_cutout_dropout: bool = False,
+                 dropout_type: Optional[str] = "standard",
                  dropout_rate: float = 0.1):
 
-        if use_standard_dropout + use_spatial_dropout + use_cutout_dropout > 1:
-            raise Exception("Use only one dropout")
-        elif use_standard_dropout + use_spatial_dropout + use_cutout_dropout == 1:
-            self.any_dropout = True
-            self.dropout_rate = dropout_rate
-        else:
+        # if use_standard_dropout + use_spatial_dropout + use_cutout_dropout > 1:
+        #     raise Exception("Use only one dropout")
+        # elif use_standard_dropout + use_spatial_dropout + use_cutout_dropout == 1:
+        #     self.any_dropout = True
+        #     self.dropout_rate = dropout_rate
+        # else:
+        #     self.any_dropout = False
+
+        if dropout_type is None:
             self.any_dropout = False
+        else:
+            self.any_dropout = True
+            if dropout_type not in ["standard", "cutout", "spatial"]:
+                raise DropoutTypeException("Dropout should be equal to 'standard' or 'cutout' or 'spatial'")
+            self.dropout_type = dropout_type
 
         super().__init__()
 
-        if use_standard_dropout:
+        if self.dropout_type == "standard":
             self.dropout1 = nn.Dropout(dropout_rate)
             self.dropout2 = nn.Dropout(dropout_rate)
             self.dropout3 = nn.Dropout(dropout_rate)
