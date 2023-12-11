@@ -1,15 +1,15 @@
 import os
-from typing import Optional
+import mlflow
 import numpy as np
 from tqdm import tqdm
-import mlflow
-import matplotlib.pyplot as plt
+
 import torch
 from torch.utils.data import DataLoader
 
 from dataset import Dataset
 from convnet import ConvNet
 from densenet import DenseNet
+from plots import plot_history, plot_confusion_matrix
 
 
 DATA_PATH = "data"
@@ -19,29 +19,11 @@ MODELS_PATH = "models"
 # DATASET = "cifar"
 DATASET = "fashion"
 BATCH_SIZE = 64
-EPOCHS = 2
+EPOCHS = 10
 LR = 0.001
 NUM_OF_CLASSES = 10
 DROPOUT_PROB = 0.2
 DROPOUT_TYPE = "standard"
-
-
-def plot_history(history: dict, filename: Optional[str] = None):
-    x = range(len(history['train_loss']))
-    plt.figure(figsize=(10, 7))
-    plt.subplot(211)
-    plt.plot(x, history['train_loss'], label='train_loss')
-    plt.plot(x, history['val_loss'], label='val_loss')
-    plt.legend()
-    plt.title('Loss')
-    plt.subplot(212)
-    plt.plot(x, history['train_acc'], label='train_acc')
-    plt.plot(x, history['val_acc'], label='val_acc')
-    plt.legend()
-    plt.title('Accuracy')
-    if filename is not None:
-        plt.savefig(os.path.join(PLOTS_PATH, filename))
-    plt.show()
 
 
 def train_model(model: torch.nn.Module, optimizer, train_dataloader: DataLoader, test_dataloader: DataLoader, device: str, test_labels: np.ndarray):
@@ -50,7 +32,8 @@ def train_model(model: torch.nn.Module, optimizer, train_dataloader: DataLoader,
         'train_loss': [],
         'val_loss': [],
         'train_acc': [],
-        'val_acc': []
+        'val_acc': [],
+        'val_preds': []
     }
     best_acc = 0
     for epoch in range(EPOCHS):
@@ -88,6 +71,7 @@ def train_model(model: torch.nn.Module, optimizer, train_dataloader: DataLoader,
                     if i % 50 == 0:
                         tepoch.set_postfix(loss=loss.item(), accuracy=np.equal(preds, labels.cpu().numpy()).mean())
             acc = np.equal(all_preds, test_labels).mean()
+            history['val_preds'] = all_preds
             history['val_loss'].append(np.mean(val_loss_epoch))
             history['val_acc'].append(acc)
             print(f"[Epoch {epoch+1}] Accuracy on test data: {acc}")
@@ -106,6 +90,7 @@ def main():
     trainloader = DataLoader(dataset.train_dataset, batch_size=BATCH_SIZE, shuffle=True)
     testloader = DataLoader(dataset.test_dataset, batch_size=BATCH_SIZE, shuffle=False)
     test_labels = np.array(dataset.test_dataset.targets)
+    labels_names = dataset.train_dataset.classes
 
 
     print(f"Number of batches in train set: {len(trainloader)}")
@@ -143,8 +128,10 @@ def main():
         # TODO save number and sizes of layers for desne and filters for CNN
         
         history = train_model(model, optimizer, trainloader, testloader, device, test_labels)
-        plot_name = run.info.run_name + ".png"
-        plot_history(history, filename=plot_name)
+        dir_path = os.path.join(PLOTS_PATH, run.info.run_name)
+        os.makedirs(dir_path)
+        plot_history(history, os.path.join(dir_path, "acc_loss.png"))
+        plot_confusion_matrix(history["val_preds"], test_labels, labels_names, os.path.join(dir_path, "confusion_matrix.png"))
 
         # saving metrics
         mlflow.log_metric("train_loss", history["train_loss"][-1])
@@ -152,8 +139,9 @@ def main():
         mlflow.log_metric("train_acc", history["train_acc"][-1])
         mlflow.log_metric("val_acc", history["val_acc"][-1])
 
-        # saving plot
-        mlflow.log_artifact(os.path.join(PLOTS_PATH, plot_name))
+        # saving plots
+        mlflow.log_artifact(os.path.join(dir_path, "acc_loss.png"))
+        mlflow.log_artifact(os.path.join(dir_path, "confusion_matrix.png"))
 
         # TODO save models
 
