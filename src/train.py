@@ -15,6 +15,9 @@ from plots import plot_history, plot_confusion_matrix
 DATA_PATH = "data"
 PLOTS_PATH = "plots"
 MODELS_PATH = "models"
+
+RANDOM_SEED = 69
+
 # cifar or fashion
 # DATASET = "cifar"
 DATASET = "fashion"
@@ -80,7 +83,10 @@ def train_model(model: torch.nn.Module, optimizer, train_dataloader: DataLoader,
                 torch.save(model, os.path.join(MODELS_PATH, "model2.pt"))
     return history
 
+
 def main():
+    torch.manual_seed(RANDOM_SEED)
+
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     print(f"{device} will be used for training")
 
@@ -119,6 +125,7 @@ def main():
             mlflow.set_tag("model_type", "CNN")
         mlflow.set_tag("optimizer", optimizer.__class__.__name__)
         mlflow.set_tag("dropout", DROPOUT_TYPE)
+        mlflow.set_tag('random_seed', RANDOM_SEED)
 
         # saving parameters
         mlflow.log_param("lr", LR)
