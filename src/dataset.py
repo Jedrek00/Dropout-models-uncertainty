@@ -1,7 +1,8 @@
 import os
 from typing import Union
 from torchvision import datasets
-import torchvision.transforms as transforms
+
+from helpers import transform
 
 
 class Dataset:
@@ -10,10 +11,6 @@ class Dataset:
         "fashion": {"directory": "FashionMNIST", "instance": datasets.FashionMNIST},
     }
 
-    transform = transforms.Compose(
-        [transforms.ToTensor(),
-        #transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
-        ])
 
     def __init__(self, type="cifar"):
         self.path = "../data"
@@ -28,5 +25,5 @@ class Dataset:
 
     def create_dataset(self, train: bool) -> Union[datasets.CIFAR10, datasets.FashionMNIST]:
         return self.dataset_info["instance"](
-            root=self.path, train=train, download=True, transform=Dataset.transform
+            root=self.path, train=train, download=True, transform=transform
         )
