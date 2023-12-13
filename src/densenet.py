@@ -1,3 +1,4 @@
+from typing import Optional
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -8,7 +9,7 @@ class DropoutTypeException(Exception):
 
 class DenseNet(nn.Module):
 
-    def __init__(self, input_dim: int, output_dim: int, hidden_dims: list[int], drop_rate: float = 0.1, dropout_type: str = "standard"):
+    def __init__(self, input_dim: int, output_dim: int, hidden_dims: list[int], dropout_rate: float = 0.1, dropout_type: str = "standard"):
         """
         Simple neural network with fully connected layers for image classification.
         :param input_dim: size of the input, calculated as img_size * img_size * number_of_channels.
@@ -18,7 +19,7 @@ class DenseNet(nn.Module):
         :param dropout_type: pass 'drop_connect' to use Drop Connect, pass 'standard' to use Standard Dropout (default option).
         """
         super().__init__()
-        self.drop_rate = drop_rate
+        self.dropout_rate = dropout_rate
         if dropout_type not in ["standard", "drop_connect"]:
             raise DropoutTypeException("Dropout should be equal to 'standard' or 'drop_connect'")
         self.dropout_type = dropout_type
@@ -29,7 +30,7 @@ class DenseNet(nn.Module):
             self.layers.append(nn.Linear(current_dim, hdim))
             current_dim = hdim
         self.layers.append(nn.Linear(current_dim, output_dim))
-        self.dropout = nn.Dropout(p=self.drop_rate)
+        self.dropout = nn.Dropout(p=self.dropout_rate)
         self.softmax = nn.Softmax(dim=1)
         
 
@@ -37,11 +38,11 @@ class DenseNet(nn.Module):
         x = torch.flatten(x, 1)
         for layer in self.layers[:-1]:
             if self.dropout_type == "drop_connect":
-                mask = torch.empty_like(layer.weight).bernoulli_(1 - self.drop_rate)
+                mask = torch.empty_like(layer.weight).bernoulli_(1 - self.dropout_rate)
                 masked_weights = layer.weight * mask
                 x = F.relu(F.linear(x, masked_weights, layer.bias))
             else:
                 x = self.dropout(x)
                 x = F.relu(layer(x))
-        out = self.softmax(self.layers[-1](x))
+        out = self.layers[-1](x)
         return out
