@@ -17,6 +17,7 @@ from helpers import transform, torch_softmax
 DATA_PATH = "data"
 PLOTS_PATH = "plots"
 MODELS_PATH = "models"
+TEST_CIFAR_PATH = "data/test_data/cifar"
 
 RANDOM_SEED = 69
 
@@ -24,7 +25,7 @@ RANDOM_SEED = 69
 DATASET = "cifar"
 # DATASET = "fashion"
 BATCH_SIZE = 64
-EPOCHS = 30
+EPOCHS = 10
 LR = 0.001
 NUM_OF_CLASSES = 10
 DROPOUT_PROB = 0.2
@@ -92,6 +93,7 @@ def predict(model_path: str, image_path: str) -> np.ndarray:
     img = Image.open(image_path)  
     img = transform(img)
     img = torch.unsqueeze(img, 0)
+    print(model.dropout_rate)
     with torch.no_grad():
         logits = model(img)
         probs = torch_softmax(logits)
@@ -172,5 +174,5 @@ if __name__ == "__main__":
     labels_names = dataset.train_dataset.classes
     print(labels_names)
 
-    p = predict(os.path.join(MODELS_PATH, "model2.pt"), os.path.join(DATA_PATH, "0002.png"))
+    p = predict(os.path.join(MODELS_PATH, "model2.pt"), os.path.join(TEST_CIFAR_PATH, "0002.png"))
     print(p)

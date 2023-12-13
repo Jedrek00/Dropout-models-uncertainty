@@ -34,19 +34,14 @@ class DenseNet(nn.Module):
         self.softmax = nn.Softmax(dim=1)
         
 
-    def forward(self, x, test_dropout_rate: Optional[float] = None):
+    def forward(self, x):
         x = torch.flatten(x, 1)
         for layer in self.layers[:-1]:
             if self.dropout_type == "drop_connect":
-                if test_dropout_rate is None:
-                    mask = torch.empty_like(layer.weight).bernoulli_(1 - self.dropout_rate)
-                else:
-                    mask = torch.empty_like(layer.weight).bernoulli_(1 - test_dropout_rate)
+                mask = torch.empty_like(layer.weight).bernoulli_(1 - self.dropout_rate)
                 masked_weights = layer.weight * mask
                 x = F.relu(F.linear(x, masked_weights, layer.bias))
             else:
-                if test_dropout_rate is not None:
-                    self.dropout = nn.Dropout(p=test_dropout_rate)
                 x = self.dropout(x)
                 x = F.relu(layer(x))
         out = self.layers[-1](x)

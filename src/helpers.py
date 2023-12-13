@@ -9,4 +9,4 @@ transform = transforms.Compose(
 )
 
 def torch_softmax(values):
-    return softmax(values)
+    return softmax(values, dim=1)
