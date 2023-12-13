@@ -2,6 +2,7 @@ import os
 import mlflow
 import numpy as np
 from tqdm import tqdm
+from PIL import Image
 
 import torch
 from torch.utils.data import DataLoader
@@ -10,11 +11,13 @@ from dataset import Dataset
 from convnet import ConvNet
 from densenet import DenseNet
 from plots import plot_history, plot_confusion_matrix
+from helpers import transform, torch_softmax
 
 
 DATA_PATH = "data"
 PLOTS_PATH = "plots"
 MODELS_PATH = "models"
+TEST_CIFAR_PATH = "data/test_data/cifar"
 
 RANDOM_SEED = 69
 
@@ -84,6 +87,19 @@ def train_model(model: torch.nn.Module, optimizer, train_dataloader: DataLoader,
     return history
 
 
+def predict(model_path: str, image_path: str) -> np.ndarray:    
+    model = torch.load(model_path)
+    model.to("cpu")
+    img = Image.open(image_path)  
+    img = transform(img)
+    img = torch.unsqueeze(img, 0)
+    print(model.dropout_rate)
+    with torch.no_grad():
+        logits = model(img)
+        probs = torch_softmax(logits)
+    return probs.numpy()
+
+
 def main():
     torch.manual_seed(RANDOM_SEED)
 
@@ -103,8 +119,11 @@ def main():
     print(f"Number of batches in test set: {len(testloader)}")
 
     # model = torch.load(os.path.join(MODELS_PATH, "model.pt"))
-    # model = DenseNet(IMG_SIZE*IMG_SIZE*NUM_CHANNELS, NUM_OF_CLASSES, [512, 256, 128], DROPOUT_PROB, DROPOUT_TYPE)
-    model = ConvNet(image_channels=NUM_CHANNELS, image_size=IMG_SIZE, filters=[32, 64, 128], kernel_sizes=[(3, 3), (3, 3), (3, 3)], dropout_type=DROPOUT_TYPE, dropout_rate=DROPOUT_PROB)
+    
+    model = DenseNet(IMG_SIZE*IMG_SIZE*NUM_CHANNELS, NUM_OF_CLASSES, [512, 256, 128], DROPOUT_PROB, DROPOUT_TYPE)
+    # model = ConvNet(image_channels=NUM_CHANNELS, image_size=IMG_SIZE, filters=[32, 64, 128], kernel_sizes=[(3, 3), (3, 3), (3, 3)], dropout_type=DROPOUT_TYPE)
+    # model = ConvNet(image_channels=NUM_CHANNELS, image_size=IMG_SIZE, filters=[32, 64, 128], kernel_sizes=[(3, 3), (3, 3), (3, 3)], dropout_type=DROPOUT_TYPE, dropout_rate=DROPOUT_PROB)
+
 
     model.to(device)
 
@@ -151,6 +170,11 @@ def main():
 
         # TODO save models
 
-
 if __name__ == "__main__":
-    main()
+    # main()
+    dataset = Dataset(type=DATASET)
+    labels_names = dataset.train_dataset.classes
+    print(labels_names)
+
+    p = predict(os.path.join(MODELS_PATH, "model2.pt"), os.path.join(TEST_CIFAR_PATH, "0002.png"))
+    print(p)
