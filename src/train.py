@@ -19,8 +19,8 @@ MODELS_PATH = "models"
 RANDOM_SEED = 69
 
 # cifar or fashion
-# DATASET = "cifar"
-DATASET = "fashion"
+DATASET = "cifar"
+# DATASET = "fashion"
 BATCH_SIZE = 64
 EPOCHS = 10
 LR = 0.001
@@ -104,8 +104,7 @@ def main():
 
     # model = torch.load(os.path.join(MODELS_PATH, "model.pt"))
     # model = DenseNet(IMG_SIZE*IMG_SIZE*NUM_CHANNELS, NUM_OF_CLASSES, [512, 256, 128], DROPOUT_PROB, DROPOUT_TYPE)
-    model = ConvNet(image_channels=NUM_CHANNELS, image_size=IMG_SIZE, filters=[32, 64, 128], kernel_sizes=[(3, 3), (3, 3), (3, 3)], dropout_type=DROPOUT_TYPE)
-    # model = ConvNet(image_channels=NUM_CHANNELS, image_size=IMG_SIZE, filters=[32, 64, 128], kernel_sizes=[(3, 3), (3, 3), (3, 3)], dropout_type=DROPOUT_TYPE, dropout_rate=0.5)
+    model = ConvNet(image_channels=NUM_CHANNELS, image_size=IMG_SIZE, filters=[32, 64, 128], kernel_sizes=[(3, 3), (3, 3), (3, 3)], dropout_type=DROPOUT_TYPE, dropout_rate=DROPOUT_PROB)
 
     model.to(device)
 
