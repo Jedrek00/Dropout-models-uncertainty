@@ -32,6 +32,8 @@ class ConvNet(nn.Module):
 
         if self.dropout_type == "standard":
             self.dropout_layer = nn.Dropout(dropout_rate)
+        elif self.dropout_type == 'spatial':
+            self.dropout_layer = nn.Dropout2d(dropout_rate)
         
         self.image_size = image_size
 
