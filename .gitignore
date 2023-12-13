@@ -1,6 +1,9 @@
 Notebooks/.ipynb_checkpoints/
 .idea/
-data/
+!data/
+data/*
 *.pyc
 mlruns/
 plots/
+!data/test_data/
+models/*
