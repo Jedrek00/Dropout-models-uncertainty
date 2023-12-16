@@ -176,14 +176,7 @@ if __name__ == "__main__":
 
     # train_model()
 
-    # p = []
-    # for i in range(100):
-    #     p.append(predict(os.path.join(MODELS_PATH, "model2.pt"), os.path.join(TEST_CIFAR_PATH, "0002.png")))
-    # plot_uncertainty_separate(np.array(p), 3, img_path=os.path.join(TEST_CIFAR_PATH, "0002.png"))
-
-
-
     p = []
     for i in range(100):
         p.append(predict(os.path.join(MODELS_PATH, "model3.pt"), os.path.join(TEST_FASHION_PATH, "0.png")))
-    plot_uncertainty_separate(np.array(p), labels_names, 4, img_path=os.path.join(TEST_FASHION_PATH, "0.png"))
+    plot_uncertainty(np.array(p), labels_names, 4, separate=False, img_path=os.path.join(TEST_FASHION_PATH, "0.png"))

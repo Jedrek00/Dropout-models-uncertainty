@@ -24,7 +24,6 @@ def plot_history(history: dict, filepath: Optional[str] = None):
     if filepath is not None:
         plt.savefig(filepath)
 
-
 def plot_confusion_matrix(preds: list, labels: list, class_names: list, filepath: Optional[str] = None):
     plt.figure(figsize=(12, 12))
     matrix = confusion_matrix(labels, preds)
@@ -34,45 +33,70 @@ def plot_confusion_matrix(preds: list, labels: list, class_names: list, filepath
     if filepath is not None:
         plt.savefig(filepath)
 
-# input: (100, 10)
-def plot_uncertainty(probs: list, max_n: Optional[int] = None, separate: bool = True, img_path: Optional[str] = None, img_size: int = 32, filepath: Optional[str] = None):
-    CONST_I = 1
-    max_n = max_n if max_n else 10
-    best_n = list(range(10))
+def plot_uncertainty(probs: list, labels: list, max_n: Optional[int] = None, separate: bool = True, img_path: Optional[str] = None, img_size: int = 32, filepath: Optional[str] = None):
+    """
+    Generate plot of model uncertainty based on probabilities given as a first argument.
+
+    :param probs: probabilities array of each option get from softmax layer
+    :param labels: list of labels
+    :param max_n: defines how many best probabilities should be shown
+    :param separate: if true, each label should be in separate column
+    :param img_path: path to image that should be shown at the bottom of a plot
+    :param img_size: size of image that is shown at the bottom of a plot
+    :param filepath: path where plot should be saved as an image
+    """
+    POS_I = 1
+    n = len(labels) if separate else 1
+    max_n = max_n if max_n else n
+    best_n = list(range(n))
 
     if max_n != None:
         sums = np.argsort(np.sum(probs.T, axis=1))[::-1]
         best_n = sums[:max_n]
 
-    x = [CONST_I] * probs.shape[0]
-    colors = plt.cm.get_cmap("jet")(np.linspace(0, 1, max_n))
+    x = []
     legend_handles = []
+    size = 50000 / max_n - 1000 * (max_n - 1) if separate else 50000
 
+    if separate:
+        x = [[i] * probs.shape[0] for i in range(len(best_n))]
+    else:
+        x = [[POS_I] * probs.shape[0] for _ in range(len(best_n))]
+        
+    colors = plt.cm.get_cmap("jet")(np.linspace(0, 1, max_n))
 
-    new_probs = probs.T[best_n, :]
-    for val, p, i in zip(best_n, new_probs, list(range(max_n))):
-        scatter = plt.scatter(x, p, color=colors[i], s=50000, marker='_', alpha=0.3, label=f"value: {val + 1}")
+    trans_probs = probs.T[best_n, :]
+    for x_p, val, p, i in zip(x, best_n, trans_probs, list(range(max_n))):
+        scatter = plt.scatter(x_p, p, color=colors[i], s=size, marker='_', alpha=0.1, label=labels[val])
         legend_handles.append(scatter)
 
     plt.ylim(0, 1)
-    plt.xlim(0,2)
-    # plt.xticks([1], "")
+    if separate:
+        plt.xticks(list(range(max_n)), best_n)
+    else:
+        plt.xticks([POS_I], "")
+
     if img_path != None:
         img = plt.imread(img_path)
         ax = plt.gca()
         tick_labels = ax.xaxis.get_ticklabels()
-        ib = OffsetImage(img, zoom=img_size / img.shape[0])
-        ib.image.axes = ax
-        ab = AnnotationBbox(ib,
-                        tick_labels[0].get_position(),
-                        frameon=False,
-                        box_alignment=(0.5, 1.2)
-                        )
-        ax.add_artist(ab)
+
+        for tick in tick_labels:
+            x_pos = tick.get_position() if separate else tick_labels[0].get_position()
+            ib = OffsetImage(img, zoom=img_size / img.shape[0])
+            ib.image.axes = ax
+            ab = AnnotationBbox(ib,
+                            x_pos,
+                            frameon=False,
+                            box_alignment=(0.5, 1.2)
+                            )
+            ax.add_artist(ab)
+
     plt.ylabel("probability")
     legend = plt.legend(handles=legend_handles)
     for handle in legend.legend_handles:
         handle.set_sizes([100])
+        handle.set_alpha(1)
     
     if filepath != None:
         plt.savefig(filepath)
@@ -86,48 +110,3 @@ def create_probs(n: int):
         norm_probs = rand_probs / np.sum(rand_probs)
         probs.append(norm_probs)
     return np.array(probs)
-
-
-def plot_uncertainty_separate(probs: list, labels: list, max_n: Optional[int] = None, img_path: Optional[str] = None, img_size: int = 32, filepath: Optional[str] = None):
-    n = len(labels)
-    max_n = max_n if max_n else n
-    best_n = list(range(n))
-
-    if max_n != None:
-        sums = np.argsort(np.sum(probs.T, axis=1))[::-1]
-        best_n = sums[:max_n]
-
-    x = [[i] * probs.shape[0] for i in range(len(best_n))]
-    colors = plt.cm.get_cmap("jet")(np.linspace(0, 1, max_n))
-    legend_handles = []
-
-
-    new_probs = probs.T[best_n, :]
-    for x_p, val, p, i in zip(x, best_n, new_probs, list(range(max_n))):
-        scatter = plt.scatter(x_p, p, color=colors[i], s=25000 / max_n, marker='_', linewidths=3, alpha=0.1, label=labels[val])
-        legend_handles.append(scatter)
-
-    plt.ylim(0, 1)
-    plt.xticks(list(range(max_n)), best_n)
-    if img_path != None:
-        img = plt.imread(img_path)
-        ax = plt.gca()
-        tick_labels = ax.xaxis.get_ticklabels()
-
-        for tick in tick_labels:
-            ib = OffsetImage(img, zoom=img_size / img.shape[0])
-            ib.image.axes = ax
-            ab = AnnotationBbox(ib,
-                            tick.get_position(),
-                            frameon=False,
-                            box_alignment=(0.5, 1.2)
-                            )
-            ax.add_artist(ab)
-    plt.ylabel("probability")
-    legend = plt.legend(handles=legend_handles)
-    for handle in legend.legend_handles:
-        handle.set_sizes([100])
-    
-    if filepath != None:
-        plt.savefig(filepath)
-    plt.show()
