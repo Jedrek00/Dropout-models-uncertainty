@@ -148,7 +148,8 @@ def main():
         DROPOUT_TYPE,
     )
     # model = ConvNet(image_channels=NUM_CHANNELS, image_size=IMG_SIZE, filters=[32, 64, 128], kernel_sizes=[(3, 3), (3, 3), (3, 3)], dropout_type=DROPOUT_TYPE)
-    # model = ConvNet(image_channels=NUM_CHANNELS, image_size=IMG_SIZE, filters=[32, 64, 128], kernel_sizes=[(3, 3), (3, 3), (3, 3)], dropout_type=DROPOUT_TYPE, dropout_rate=0.5)
+    # model = ConvNet(image_channels=NUM_CHANNELS, image_size=IMG_SIZE, filters=[32, 64, 128], kernel_sizes=[(3, 3), (3, 3), (3, 3)], dropout_type=DROPOUT_TYPE, dropout_rate=DROPOUT_PROB)
+
 
     model.to(device)
 
