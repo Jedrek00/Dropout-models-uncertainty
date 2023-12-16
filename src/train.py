@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader
 from dataset import Dataset
 from convnet import ConvNet
 from densenet import DenseNet
-from plots import plot_history, plot_confusion_matrix
+from plots import plot_history, plot_confusion_matrix, plot_uncertainty, plot_uncertainty_separate
 from helpers import transform, torch_softmax
 
 
@@ -18,12 +18,13 @@ DATA_PATH = "data"
 PLOTS_PATH = "plots"
 MODELS_PATH = "models"
 TEST_CIFAR_PATH = "data/test_data/cifar"
+TEST_FASHION_PATH = "data/test_data/fashion"
 
 RANDOM_SEED = 69
 
 # cifar or fashion
-DATASET = "cifar"
-# DATASET = "fashion"
+# DATASET = "cifar"
+DATASET = "fashion"
 BATCH_SIZE = 64
 EPOCHS = 10
 LR = 0.001
@@ -83,21 +84,21 @@ def train_model(model: torch.nn.Module, optimizer, train_dataloader: DataLoader,
             print(f"[Epoch {epoch+1}] Accuracy on test data: {acc}")
             if acc > best_acc:
                 best_acc = acc
-                torch.save(model, os.path.join(MODELS_PATH, "model2.pt"))
+                torch.save(model, os.path.join(MODELS_PATH, "model3.pt"))
     return history
 
 
 def predict(model_path: str, image_path: str) -> np.ndarray:    
-    model = torch.load(model_path)
+    model = torch.load(model_path, map_location=torch.device('cpu'))
     model.to("cpu")
+    model.train()
     img = Image.open(image_path)  
     img = transform(img)
     img = torch.unsqueeze(img, 0)
-    print(model.dropout_rate)
     with torch.no_grad():
         logits = model(img)
         probs = torch_softmax(logits)
-    return probs.numpy()
+    return probs.numpy()[0]
 
 
 def main():
@@ -172,7 +173,17 @@ if __name__ == "__main__":
     # main()
     dataset = Dataset(type=DATASET)
     labels_names = dataset.train_dataset.classes
-    print(labels_names)
 
-    p = predict(os.path.join(MODELS_PATH, "model2.pt"), os.path.join(TEST_CIFAR_PATH, "0002.png"))
-    print(p)
+    # train_model()
+
+    # p = []
+    # for i in range(100):
+    #     p.append(predict(os.path.join(MODELS_PATH, "model2.pt"), os.path.join(TEST_CIFAR_PATH, "0002.png")))
+    # plot_uncertainty_separate(np.array(p), 3, img_path=os.path.join(TEST_CIFAR_PATH, "0002.png"))
+
+
+
+    p = []
+    for i in range(100):
+        p.append(predict(os.path.join(MODELS_PATH, "model3.pt"), os.path.join(TEST_FASHION_PATH, "0.png")))
+    plot_uncertainty_separate(np.array(p), labels_names, 4, img_path=os.path.join(TEST_FASHION_PATH, "0.png"))
