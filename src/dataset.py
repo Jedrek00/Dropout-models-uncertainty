@@ -7,8 +7,8 @@ from helpers import transform
 
 class Dataset:
     types = {
-        "cifar": {"directory": "cifar-10-batches-py", "instance": datasets.CIFAR10},
-        "fashion": {"directory": "FashionMNIST", "instance": datasets.FashionMNIST},
+        "cifar10": {"directory": "cifar-10-batches-py", "instance": datasets.CIFAR10},
+        "fashion_mnist": {"directory": "FashionMNIST", "instance": datasets.FashionMNIST},
     }
 
 

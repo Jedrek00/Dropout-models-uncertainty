@@ -20,8 +20,10 @@ class DenseNet(nn.Module):
         """
         super().__init__()
         self.dropout_rate = dropout_rate
+        self.valid = True
         if dropout_type not in ["standard", "drop_connect"]:
-            raise DropoutTypeException("Dropout should be equal to 'standard' or 'drop_connect'")
+            print(f'''Can't use "{dropout_type}" as dropout type for densenet''')
+            self.valid = False
         self.dropout_type = dropout_type
         
         current_dim = input_dim

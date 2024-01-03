@@ -20,12 +20,14 @@ class ConvNet(nn.Module):
         if len(kernel_sizes) != 3:
             raise Exception('Use 3 kernel sizes!')
 
+        self.valid = True
         if dropout_type is None:
             self.any_dropout = False
         else:
             self.any_dropout = True
-            if dropout_type not in ["standard", "cutout", "spatial"]:
-                raise DropoutTypeException("Dropout should be equal to 'standard' or 'cutout' or 'spatial'")
+            if dropout_type not in ["standard", "spatial"]:
+                print(f'''Can't use "{dropout_type}" as dropout type for convnet!''')
+                self.valid = False
             self.dropout_type = dropout_type
 
         super().__init__()
