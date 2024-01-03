@@ -6,4 +6,3 @@ data/*
 mlruns/
 plots/
 !data/test_data/
-models/*

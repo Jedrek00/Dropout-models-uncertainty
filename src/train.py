@@ -3,10 +3,12 @@ import mlflow
 import numpy as np
 from tqdm import tqdm
 from PIL import Image
+from copy import deepcopy
 
 import torch
 from torch.utils.data import DataLoader
 
+import hiperparameters
 from dataset import Dataset
 from convnet import ConvNet
 from densenet import DenseNet
@@ -24,17 +26,8 @@ MODELS_PATH = "models"
 TEST_CIFAR_PATH = "data/test_data/cifar"
 TEST_FASHION_PATH = "data/test_data/fashion"
 
-RANDOM_SEED = 69
 
-# cifar or fashion
-# DATASET = "cifar"
-DATASET = "fashion"
-BATCH_SIZE = 64
-EPOCHS = 10
-LR = 0.001
-NUM_OF_CLASSES = 10
-DROPOUT_PROB = 0.2
-DROPOUT_TYPE = "standard"
+
 
 
 def train_model(
@@ -54,7 +47,8 @@ def train_model(
         "val_preds": [],
     }
     best_acc = 0
-    for epoch in range(EPOCHS):
+    best_model = deepcopy(model)
+    for epoch in range(hiperparameters.EPOCHS):
         with tqdm(
             train_dataloader, unit="batch", total=len(train_dataloader)
         ) as tepoch:
@@ -105,8 +99,9 @@ def train_model(
             print(f"[Epoch {epoch+1}] Accuracy on test data: {acc}")
             if acc > best_acc:
                 best_acc = acc
-                torch.save(model, os.path.join(MODELS_PATH, "model3.pt"))
-    return history
+                best_model = deepcopy(model)
+                # torch.save(model, os.path.join(MODELS_PATH, "model3.pt"))
+    return history, best_model
 
 
 def predict(model_path: str, image_path: str) -> np.ndarray:
@@ -122,17 +117,17 @@ def predict(model_path: str, image_path: str) -> np.ndarray:
     return probs.numpy()[0]
 
 
-def main():
-    torch.manual_seed(RANDOM_SEED)
+def main(model_architecture, dataset_name, dropout_type, dropout_rate, random_seed):
+    torch.manual_seed(random_seed)
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(f"{device} will be used for training")
 
-    dataset = Dataset(type=DATASET)
+    dataset = Dataset(type=dataset_name)
     NUM_CHANNELS = dataset.num_channels
     IMG_SIZE = dataset.img_size
-    trainloader = DataLoader(dataset.train_dataset, batch_size=BATCH_SIZE, shuffle=True)
-    testloader = DataLoader(dataset.test_dataset, batch_size=BATCH_SIZE, shuffle=False)
+    trainloader = DataLoader(dataset.train_dataset, batch_size=hiperparameters.BATCH_SIZE, shuffle=True)
+    testloader = DataLoader(dataset.test_dataset, batch_size=hiperparameters.BATCH_SIZE, shuffle=False)
     test_labels = np.array(dataset.test_dataset.targets)
     labels_names = dataset.train_dataset.classes
 
@@ -140,27 +135,33 @@ def main():
     print(f"Number of batches in test set: {len(testloader)}")
 
     # model = torch.load(os.path.join(MODELS_PATH, "model.pt"))
-    model = DenseNet(
-        IMG_SIZE * IMG_SIZE * NUM_CHANNELS,
-        NUM_OF_CLASSES,
-        [512, 256, 128],
-        DROPOUT_PROB,
-        DROPOUT_TYPE,
-    )
-    # model = ConvNet(image_channels=NUM_CHANNELS, image_size=IMG_SIZE, filters=[32, 64, 128], kernel_sizes=[(3, 3), (3, 3), (3, 3)], dropout_type=DROPOUT_TYPE)
-    # model = ConvNet(image_channels=NUM_CHANNELS, image_size=IMG_SIZE, filters=[32, 64, 128], kernel_sizes=[(3, 3), (3, 3), (3, 3)], dropout_type=DROPOUT_TYPE, dropout_rate=DROPOUT_PROB)
+    if model_architecture == 'densenet':
+        model = DenseNet(
+            IMG_SIZE * IMG_SIZE * NUM_CHANNELS,
+            hiperparameters.NUM_OF_CLASSES,
+            [512, 256, 128],
+            dropout_rate,
+            dropout_type,
+        )
+    elif model_architecture == 'convnet':
+        model = ConvNet(image_channels=NUM_CHANNELS, image_size=IMG_SIZE, filters=[32, 64, 128], kernel_sizes=[(3, 3), (3, 3), (3, 3)], dropout_type=dropout_type, dropout_rate=dropout_rate)
+    else:
+        print(f'No such model architecture as "{model_architecture}"!')
+        return
 
+    if not model.valid:
+        return
 
     model.to(device)
 
-    optimizer = torch.optim.AdamW(model.parameters(), lr=LR)
-    # optimizer = torch.optim.SGD(model.parameters(), lr=LR, momentum=0.9)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=hiperparameters.LR)
+    # optimizer = torch.optim.SGD(model.parameters(), lr=hiperparameters.LR, momentum=0.9)
 
     mlflow.set_experiment("Dropout for uncertainty estimation")
 
     with mlflow.start_run() as run:
         # saving tags
-        mlflow.set_tag("dataset", DATASET)
+        mlflow.set_tag("dataset", dataset_name)
         mlflow.set_tag("trainset_len", len(dataset.train_dataset.data))
         mlflow.set_tag("testset_len", len(dataset.test_dataset.data))
         if isinstance(model, DenseNet):
@@ -168,17 +169,17 @@ def main():
         else:
             mlflow.set_tag("model_type", "CNN")
         mlflow.set_tag("optimizer", optimizer.__class__.__name__)
-        mlflow.set_tag("dropout", DROPOUT_TYPE)
-        mlflow.set_tag("random_seed", RANDOM_SEED)
+        mlflow.set_tag("dropout", dropout_type)
+        mlflow.set_tag("random_seed", random_seed)
 
         # saving parameters
-        mlflow.log_param("lr", LR)
-        mlflow.log_param("batch_size", BATCH_SIZE)
-        mlflow.log_param("epochs", EPOCHS)
-        mlflow.log_param("dropout_rate", DROPOUT_PROB)
+        mlflow.log_param("lr", hiperparameters.LR)
+        mlflow.log_param("batch_size", hiperparameters.BATCH_SIZE)
+        mlflow.log_param("epochs", hiperparameters.EPOCHS)
+        mlflow.log_param("dropout_rate", dropout_rate)
         # TODO save number and sizes of layers for desne and filters for CNN
 
-        history = train_model(
+        history, model = train_model(
             model, optimizer, trainloader, testloader, device, test_labels
         )
         dir_path = os.path.join(PLOTS_PATH, run.info.run_name)
@@ -202,27 +203,34 @@ def main():
         mlflow.log_artifact(os.path.join(dir_path, "confusion_matrix.png"))
 
         # TODO save models
-
+        model_path = os.path.join('models', dataset_name, f'{model_architecture}-{dropout_type}-{dropout_rate}', f'random-seed-{random_seed}.pt')
+        torch.save(model, model_path)
 
 if __name__ == "__main__":
-    # main()
-    dataset = Dataset(type=DATASET)
-    labels_names = dataset.train_dataset.classes
+    for random_seed in hiperparameters.RANDOM_SEEDS:
+        for dataset_name in hiperparameters.DATASETS:
+            for model_architecture in hiperparameters.MODEL_ARCHITECTURES:
+                for dropout_type in hiperparameters.DROPOUT_TYPES:
+                    for dropout_rate in hiperparameters.DROPOUTS_RATES:
+                        print(f'\nTraining:\nRandom seed: {random_seed}\nDataset: {dataset_name}\nModel architecture: {model_architecture}\nDropout type: {dropout_type}\nDropout rate: {dropout_rate}')
+                        main(model_architecture=model_architecture, dataset_name=dataset_name, dropout_type=dropout_type, dropout_rate=dropout_rate, random_seed=random_seed)
+    # dataset = Dataset(type=DATASET)
+    # labels_names = dataset.train_dataset.classes
 
     # train_model()
 
-    p = []
-    for i in range(100):
-        p.append(
-            predict(
-                os.path.join(MODELS_PATH, "model3.pt"),
-                os.path.join(TEST_FASHION_PATH, "0.png"),
-            )
-        )
-    plot_uncertainty(
-        np.array(p),
-        labels=labels_names,
-        max_n=4,
-        separate=True,
-        img_path=os.path.join(TEST_FASHION_PATH, "0.png"),
-    )
+    # p = []
+    # for i in range(100):
+    #     p.append(
+    #         predict(
+    #             os.path.join(MODELS_PATH, "model3.pt"),
+    #             os.path.join(TEST_FASHION_PATH, "0.png"),
+    #         )
+    #     )
+    # plot_uncertainty(
+    #     np.array(p),
+    #     labels=labels_names,
+    #     max_n=4,
+    #     separate=True,
+    #     img_path=os.path.join(TEST_FASHION_PATH, "0.png"),
+    # )
