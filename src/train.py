@@ -28,10 +28,6 @@ TEST_FASHION_PATH = "data/test_data/fashion"
 
 
 
-BATCH_SIZE = 64
-EPOCHS = 2
-LR = 0.001
-NUM_OF_CLASSES = 10
 
 
 def train_model(
@@ -52,7 +48,7 @@ def train_model(
     }
     best_acc = 0
     best_model = deepcopy(model)
-    for epoch in range(EPOCHS):
+    for epoch in range(hiperparameters.EPOCHS):
         with tqdm(
             train_dataloader, unit="batch", total=len(train_dataloader)
         ) as tepoch:
@@ -130,8 +126,8 @@ def main(model_architecture, dataset_name, dropout_type, dropout_rate, random_se
     dataset = Dataset(type=dataset_name)
     NUM_CHANNELS = dataset.num_channels
     IMG_SIZE = dataset.img_size
-    trainloader = DataLoader(dataset.train_dataset, batch_size=BATCH_SIZE, shuffle=True)
-    testloader = DataLoader(dataset.test_dataset, batch_size=BATCH_SIZE, shuffle=False)
+    trainloader = DataLoader(dataset.train_dataset, batch_size=hiperparameters.BATCH_SIZE, shuffle=True)
+    testloader = DataLoader(dataset.test_dataset, batch_size=hiperparameters.BATCH_SIZE, shuffle=False)
     test_labels = np.array(dataset.test_dataset.targets)
     labels_names = dataset.train_dataset.classes
 
@@ -142,7 +138,7 @@ def main(model_architecture, dataset_name, dropout_type, dropout_rate, random_se
     if model_architecture == 'densenet':
         model = DenseNet(
             IMG_SIZE * IMG_SIZE * NUM_CHANNELS,
-            NUM_OF_CLASSES,
+            hiperparameters.NUM_OF_CLASSES,
             [512, 256, 128],
             dropout_rate,
             dropout_type,
@@ -158,8 +154,8 @@ def main(model_architecture, dataset_name, dropout_type, dropout_rate, random_se
 
     model.to(device)
 
-    optimizer = torch.optim.AdamW(model.parameters(), lr=LR)
-    # optimizer = torch.optim.SGD(model.parameters(), lr=LR, momentum=0.9)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=hiperparameters.LR)
+    # optimizer = torch.optim.SGD(model.parameters(), lr=hiperparameters.LR, momentum=0.9)
 
     mlflow.set_experiment("Dropout for uncertainty estimation")
 
@@ -177,9 +173,9 @@ def main(model_architecture, dataset_name, dropout_type, dropout_rate, random_se
         mlflow.set_tag("random_seed", random_seed)
 
         # saving parameters
-        mlflow.log_param("lr", LR)
-        mlflow.log_param("batch_size", BATCH_SIZE)
-        mlflow.log_param("epochs", EPOCHS)
+        mlflow.log_param("lr", hiperparameters.LR)
+        mlflow.log_param("batch_size", hiperparameters.BATCH_SIZE)
+        mlflow.log_param("epochs", hiperparameters.EPOCHS)
         mlflow.log_param("dropout_rate", dropout_rate)
         # TODO save number and sizes of layers for desne and filters for CNN
 
