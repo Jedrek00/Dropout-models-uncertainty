@@ -1,0 +1,15 @@
+artifact_uri: file:///home/keren/Dropout-models-uncertainty/mlruns/488034839311860916/9c6d6d5c777442ce89dfad8ea8882bf2/artifacts
+end_time: 1704392959844
+entry_point_name: ''
+experiment_id: '488034839311860916'
+lifecycle_stage: active
+run_id: 9c6d6d5c777442ce89dfad8ea8882bf2
+run_name: receptive-loon-261
+run_uuid: 9c6d6d5c777442ce89dfad8ea8882bf2
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1704392834424
+status: 3
+tags: []
+user_id: keren

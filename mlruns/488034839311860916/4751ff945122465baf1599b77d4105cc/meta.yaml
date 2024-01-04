@@ -1,0 +1,15 @@
+artifact_uri: file:///home/keren/Dropout-models-uncertainty/mlruns/488034839311860916/4751ff945122465baf1599b77d4105cc/artifacts
+end_time: 1704391751601
+entry_point_name: ''
+experiment_id: '488034839311860916'
+lifecycle_stage: active
+run_id: 4751ff945122465baf1599b77d4105cc
+run_name: valuable-quail-596
+run_uuid: 4751ff945122465baf1599b77d4105cc
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1704391629107
+status: 3
+tags: []
+user_id: keren

@@ -1,0 +1,15 @@
+artifact_uri: file:///home/keren/Dropout-models-uncertainty/mlruns/488034839311860916/1af019557dcb4066b45ad1fda1ba0643/artifacts
+end_time: 1704393343799
+entry_point_name: ''
+experiment_id: '488034839311860916'
+lifecycle_stage: active
+run_id: 1af019557dcb4066b45ad1fda1ba0643
+run_name: spiffy-tern-722
+run_uuid: 1af019557dcb4066b45ad1fda1ba0643
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1704393218055
+status: 3
+tags: []
+user_id: keren

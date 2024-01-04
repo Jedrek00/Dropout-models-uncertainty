@@ -1,0 +1,15 @@
+artifact_uri: file:///home/keren/Dropout-models-uncertainty/mlruns/488034839311860916/4d5675e53ba24098a056515fbdf58a32/artifacts
+end_time: 1704391379112
+entry_point_name: ''
+experiment_id: '488034839311860916'
+lifecycle_stage: active
+run_id: 4d5675e53ba24098a056515fbdf58a32
+run_name: hilarious-boar-910
+run_uuid: 4d5675e53ba24098a056515fbdf58a32
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1704391243542
+status: 3
+tags: []
+user_id: keren

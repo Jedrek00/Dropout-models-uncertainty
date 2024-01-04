@@ -1,0 +1,15 @@
+artifact_uri: file:///home/keren/Dropout-models-uncertainty/mlruns/488034839311860916/91d14b1842cd4a4e9cf9c9dee5ba3ae2/artifacts
+end_time: 1704392248199
+entry_point_name: ''
+experiment_id: '488034839311860916'
+lifecycle_stage: active
+run_id: 91d14b1842cd4a4e9cf9c9dee5ba3ae2
+run_name: lyrical-doe-54
+run_uuid: 91d14b1842cd4a4e9cf9c9dee5ba3ae2
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1704392121336
+status: 3
+tags: []
+user_id: keren

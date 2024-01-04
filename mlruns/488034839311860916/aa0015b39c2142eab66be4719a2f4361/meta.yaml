@@ -1,0 +1,15 @@
+artifact_uri: file:///home/keren/Dropout-models-uncertainty/mlruns/488034839311860916/aa0015b39c2142eab66be4719a2f4361/artifacts
+end_time: 1704391098651
+entry_point_name: ''
+experiment_id: '488034839311860916'
+lifecycle_stage: active
+run_id: aa0015b39c2142eab66be4719a2f4361
+run_name: sedate-pig-178
+run_uuid: aa0015b39c2142eab66be4719a2f4361
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1704390976214
+status: 3
+tags: []
+user_id: keren

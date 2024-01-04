@@ -1,0 +1,15 @@
+artifact_uri: file:///home/keren/Dropout-models-uncertainty/mlruns/488034839311860916/bbd2fc1da8ec4e8f9082c3d10b333269/artifacts
+end_time: 1704393087137
+entry_point_name: ''
+experiment_id: '488034839311860916'
+lifecycle_stage: active
+run_id: bbd2fc1da8ec4e8f9082c3d10b333269
+run_name: blushing-whale-861
+run_uuid: bbd2fc1da8ec4e8f9082c3d10b333269
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1704392961011
+status: 3
+tags: []
+user_id: keren

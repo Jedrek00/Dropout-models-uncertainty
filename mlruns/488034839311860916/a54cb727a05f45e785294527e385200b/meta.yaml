@@ -1,0 +1,15 @@
+artifact_uri: file:///home/keren/Dropout-models-uncertainty/mlruns/488034839311860916/a54cb727a05f45e785294527e385200b/artifacts
+end_time: 1704392373618
+entry_point_name: ''
+experiment_id: '488034839311860916'
+lifecycle_stage: active
+run_id: a54cb727a05f45e785294527e385200b
+run_name: rare-calf-91
+run_uuid: a54cb727a05f45e785294527e385200b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1704392249341
+status: 3
+tags: []
+user_id: keren

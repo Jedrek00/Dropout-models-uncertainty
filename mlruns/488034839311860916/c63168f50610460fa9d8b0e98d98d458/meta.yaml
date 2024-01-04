@@ -1,0 +1,15 @@
+artifact_uri: file:///home/keren/Dropout-models-uncertainty/mlruns/488034839311860916/c63168f50610460fa9d8b0e98d98d458/artifacts
+end_time: 1704390856198
+entry_point_name: ''
+experiment_id: '488034839311860916'
+lifecycle_stage: active
+run_id: c63168f50610460fa9d8b0e98d98d458
+run_name: dapper-shrimp-559
+run_uuid: c63168f50610460fa9d8b0e98d98d458
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1704390737256
+status: 3
+tags: []
+user_id: keren

@@ -1,0 +1,15 @@
+artifact_uri: file:///home/keren/Dropout-models-uncertainty/mlruns/488034839311860916/e81c0a716a284b11901797cfcce4b006/artifacts
+end_time: 1704392611183
+entry_point_name: ''
+experiment_id: '488034839311860916'
+lifecycle_stage: active
+run_id: e81c0a716a284b11901797cfcce4b006
+run_name: stylish-conch-440
+run_uuid: e81c0a716a284b11901797cfcce4b006
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1704392503402
+status: 3
+tags: []
+user_id: keren

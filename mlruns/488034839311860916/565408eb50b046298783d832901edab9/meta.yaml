@@ -1,0 +1,15 @@
+artifact_uri: file:///home/keren/Dropout-models-uncertainty/mlruns/488034839311860916/565408eb50b046298783d832901edab9/artifacts
+end_time: 1704390737196
+entry_point_name: ''
+experiment_id: '488034839311860916'
+lifecycle_stage: active
+run_id: 565408eb50b046298783d832901edab9
+run_name: victorious-panda-720
+run_uuid: 565408eb50b046298783d832901edab9
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1704390624672
+status: 3
+tags: []
+user_id: keren

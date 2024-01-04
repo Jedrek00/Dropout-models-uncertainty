@@ -1,0 +1,15 @@
+artifact_uri: file:///home/keren/Dropout-models-uncertainty/mlruns/488034839311860916/5c6fed1771de4eb0a113e3184e917bce/artifacts
+end_time: 1704393213546
+entry_point_name: ''
+experiment_id: '488034839311860916'
+lifecycle_stage: active
+run_id: 5c6fed1771de4eb0a113e3184e917bce
+run_name: upbeat-lamb-0
+run_uuid: 5c6fed1771de4eb0a113e3184e917bce
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1704393088260
+status: 3
+tags: []
+user_id: keren

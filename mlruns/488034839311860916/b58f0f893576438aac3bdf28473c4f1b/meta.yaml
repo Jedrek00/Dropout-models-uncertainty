@@ -1,0 +1,15 @@
+artifact_uri: file:///home/keren/Dropout-models-uncertainty/mlruns/488034839311860916/b58f0f893576438aac3bdf28473c4f1b/artifacts
+end_time: 1704391874171
+entry_point_name: ''
+experiment_id: '488034839311860916'
+lifecycle_stage: active
+run_id: b58f0f893576438aac3bdf28473c4f1b
+run_name: worried-ape-431
+run_uuid: b58f0f893576438aac3bdf28473c4f1b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1704391751717
+status: 3
+tags: []
+user_id: keren
