@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Maciej/Desktop/Studia/Uczenie%20G%C5%82%C4%99bokie/Dropout-models-uncertainty/mlruns/488034839311860916/fa26c02875504630bdec7e7618a5e2ec/artifacts
+end_time: 1704367350007
+entry_point_name: ''
+experiment_id: '488034839311860916'
+lifecycle_stage: active
+run_id: fa26c02875504630bdec7e7618a5e2ec
+run_name: fun-dog-928
+run_uuid: fa26c02875504630bdec7e7618a5e2ec
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1704367221971
+status: 3
+tags: []
+user_id: Maciej
