@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Maciej/Desktop/Studia/Uczenie%20G%C5%82%C4%99bokie/Dropout-models-uncertainty/mlruns/488034839311860916/4db8e77231eb4cf58c1dd4897cc2171a/artifacts
+end_time: 1704366961420
+entry_point_name: ''
+experiment_id: '488034839311860916'
+lifecycle_stage: active
+run_id: 4db8e77231eb4cf58c1dd4897cc2171a
+run_name: beautiful-toad-873
+run_uuid: 4db8e77231eb4cf58c1dd4897cc2171a
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1704366748221
+status: 3
+tags: []
+user_id: Maciej

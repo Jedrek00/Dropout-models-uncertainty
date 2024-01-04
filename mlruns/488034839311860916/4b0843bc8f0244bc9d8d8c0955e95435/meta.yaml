@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Maciej/Desktop/Studia/Uczenie%20G%C5%82%C4%99bokie/Dropout-models-uncertainty/mlruns/488034839311860916/4b0843bc8f0244bc9d8d8c0955e95435/artifacts
+end_time: 1704375049472
+entry_point_name: ''
+experiment_id: '488034839311860916'
+lifecycle_stage: active
+run_id: 4b0843bc8f0244bc9d8d8c0955e95435
+run_name: inquisitive-fox-126
+run_uuid: 4b0843bc8f0244bc9d8d8c0955e95435
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1704374559298
+status: 3
+tags: []
+user_id: Maciej

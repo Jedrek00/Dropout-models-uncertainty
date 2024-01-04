@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Maciej/Desktop/Studia/Uczenie%20G%C5%82%C4%99bokie/Dropout-models-uncertainty/mlruns/488034839311860916/dd53ade7d8ab4941bf597861c292d847/artifacts
+end_time: 1704367468908
+entry_point_name: ''
+experiment_id: '488034839311860916'
+lifecycle_stage: active
+run_id: dd53ade7d8ab4941bf597861c292d847
+run_name: incongruous-mink-110
+run_uuid: dd53ade7d8ab4941bf597861c292d847
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1704367350068
+status: 3
+tags: []
+user_id: Maciej

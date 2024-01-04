@@ -22,7 +22,6 @@ from helpers import transform, torch_softmax
 
 DATA_PATH = "data"
 PLOTS_PATH = "plots"
-MODELS_PATH = "models"
 TEST_CIFAR_PATH = "data/test_data/cifar"
 TEST_FASHION_PATH = "data/test_data/fashion"
 
@@ -214,16 +213,21 @@ if __name__ == "__main__":
                     for dropout_rate in hiperparameters.DROPOUTS_RATES:
                         print(f'\nTraining:\nRandom seed: {random_seed}\nDataset: {dataset_name}\nModel architecture: {model_architecture}\nDropout type: {dropout_type}\nDropout rate: {dropout_rate}')
                         main(model_architecture=model_architecture, dataset_name=dataset_name, dropout_type=dropout_type, dropout_rate=dropout_rate, random_seed=random_seed)
+
+    # RANDOM_SEED = '100'
+    # DATASET = 'fashion_mnist'
+    # MODEL = 'convnet'
+    # DROPOUT_TYPE = 'standard'
+    # DROPOUT_RATE = '0.5'
+    # MODELS_PATH = os.path.join('models', DATASET, f'{MODEL}-{DROPOUT_TYPE}-{DROPOUT_RATE}',
+    #                           f'random-seed-{RANDOM_SEED}.pt')
     # dataset = Dataset(type=DATASET)
     # labels_names = dataset.train_dataset.classes
-
-    # train_model()
-
     # p = []
     # for i in range(100):
     #     p.append(
     #         predict(
-    #             os.path.join(MODELS_PATH, "model3.pt"),
+    #             MODELS_PATH,
     #             os.path.join(TEST_FASHION_PATH, "0.png"),
     #         )
     #     )
