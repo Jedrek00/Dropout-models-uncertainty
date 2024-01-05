@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Maciej/Desktop/Studia/Uczenie%20G%C5%82%C4%99bokie/Dropout-models-uncertainty/mlruns/488034839311860916/da98978187b9428dbec3cc33cf44fec5/artifacts
+end_time: 1704446256570
+entry_point_name: ''
+experiment_id: '488034839311860916'
+lifecycle_stage: active
+run_id: da98978187b9428dbec3cc33cf44fec5
+run_name: omniscient-tern-789
+run_uuid: da98978187b9428dbec3cc33cf44fec5
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1704445270256
+status: 3
+tags: []
+user_id: Maciej

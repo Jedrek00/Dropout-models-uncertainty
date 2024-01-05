@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/Maciej/Desktop/Studia/Uczenie%20G%C5%82%C4%99bokie/Dropout-models-uncertainty/mlruns/488034839311860916/70ea69ab794143d9810b917f193c1cae/artifacts
+end_time: 1704437950106
+entry_point_name: ''
+experiment_id: '488034839311860916'
+lifecycle_stage: active
+run_id: 70ea69ab794143d9810b917f193c1cae
+run_name: brawny-snipe-67
+run_uuid: 70ea69ab794143d9810b917f193c1cae
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1704392008913
+status: 3
+tags: []
+user_id: Maciej
