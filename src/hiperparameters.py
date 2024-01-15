@@ -1,5 +1,5 @@
 # random seeds to train with
-RANDOM_SEEDS = [101]
+RANDOM_SEEDS = [110]
 
 # datasets to train with
 DATASETS = ['fashion_mnist', 'cifar10']
