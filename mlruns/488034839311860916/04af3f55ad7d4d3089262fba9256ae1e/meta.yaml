@@ -1,0 +1,15 @@
+artifact_uri: file:///E:\Dokumenty\Na studia\Semestr 9\Uczenie Głębokie\Dropout-models-uncertainty\mlruns\488034839311860916/04af3f55ad7d4d3089262fba9256ae1e/artifacts
+end_time: 1704839788519
+entry_point_name: ''
+experiment_id: '488034839311860916'
+lifecycle_stage: active
+run_id: 04af3f55ad7d4d3089262fba9256ae1e
+run_name: funny-shrike-487
+run_uuid: 04af3f55ad7d4d3089262fba9256ae1e
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1704838905262
+status: 3
+tags: []
+user_id: Marcin

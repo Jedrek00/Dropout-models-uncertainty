@@ -1,0 +1,15 @@
+artifact_uri: file:///E:\Dokumenty\Na studia\Semestr 9\Uczenie Głębokie\Dropout-models-uncertainty\mlruns\488034839311860916/67c55b438b5b4bb98b892583f5f844ac/artifacts
+end_time: 1704826917110
+entry_point_name: ''
+experiment_id: '488034839311860916'
+lifecycle_stage: active
+run_id: 67c55b438b5b4bb98b892583f5f844ac
+run_name: fortunate-carp-41
+run_uuid: 67c55b438b5b4bb98b892583f5f844ac
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1704826624559
+status: 3
+tags: []
+user_id: Marcin

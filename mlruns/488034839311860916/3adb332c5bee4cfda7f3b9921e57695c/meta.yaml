@@ -1,0 +1,15 @@
+artifact_uri: file:///E:\Dokumenty\Na studia\Semestr 9\Uczenie Głębokie\Dropout-models-uncertainty\mlruns\488034839311860916/3adb332c5bee4cfda7f3b9921e57695c/artifacts
+end_time: 1704832971932
+entry_point_name: ''
+experiment_id: '488034839311860916'
+lifecycle_stage: active
+run_id: 3adb332c5bee4cfda7f3b9921e57695c
+run_name: rumbling-bee-848
+run_uuid: 3adb332c5bee4cfda7f3b9921e57695c
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1704832509267
+status: 3
+tags: []
+user_id: Marcin
