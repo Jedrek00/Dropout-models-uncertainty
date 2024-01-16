@@ -17,7 +17,7 @@ from plots import (
     plot_confusion_matrix,
     plot_uncertainty,
 )
-from helpers import transform, torch_softmax
+from helpers import transform, torch_softmax, morph
 
 
 DATA_PATH = "data"
@@ -205,7 +205,7 @@ def main(model_architecture, dataset_name, dropout_type, dropout_rate, random_se
         model_path = os.path.join('models', dataset_name, f'{model_architecture}-{dropout_type}-{dropout_rate}', f'random-seed-{random_seed}.pt')
         torch.save(model, model_path)
 
-if __name__ == "__main__":
+def train():
     for random_seed in hiperparameters.RANDOM_SEEDS:
         for dataset_name in hiperparameters.DATASETS:
             for model_architecture in hiperparameters.MODEL_ARCHITECTURES:
@@ -214,27 +214,38 @@ if __name__ == "__main__":
                         print(f'\nTraining:\nRandom seed: {random_seed}\nDataset: {dataset_name}\nModel architecture: {model_architecture}\nDropout type: {dropout_type}\nDropout rate: {dropout_rate}')
                         main(model_architecture=model_architecture, dataset_name=dataset_name, dropout_type=dropout_type, dropout_rate=dropout_rate, random_seed=random_seed)
 
-    # RANDOM_SEED = '100'
-    # DATASET = 'fashion_mnist'
-    # MODEL = 'convnet'
-    # DROPOUT_TYPE = 'standard'
-    # DROPOUT_RATE = '0.5'
-    # MODELS_PATH = os.path.join('models', DATASET, f'{MODEL}-{DROPOUT_TYPE}-{DROPOUT_RATE}',
-    #                           f'random-seed-{RANDOM_SEED}.pt')
-    # dataset = Dataset(type=DATASET)
-    # labels_names = dataset.train_dataset.classes
-    # p = []
-    # for i in range(100):
-    #     p.append(
-    #         predict(
-    #             MODELS_PATH,
-    #             os.path.join(TEST_FASHION_PATH, "0.png"),
-    #         )
-    #     )
-    # plot_uncertainty(
-    #     np.array(p),
-    #     labels=labels_names,
-    #     max_n=4,
-    #     separate=True,
-    #     img_path=os.path.join(TEST_FASHION_PATH, "0.png"),
-    # )
+def test():
+    RANDOM_SEED = '100'
+    DATASET = 'fashion_mnist'
+    MODEL = 'convnet'
+    DROPOUT_TYPE = 'standard'
+    DROPOUT_RATE = '0.5'
+    MODELS_PATH = os.path.join('models', DATASET, f'{MODEL}-{DROPOUT_TYPE}-{DROPOUT_RATE}',
+                              f'random-seed-{RANDOM_SEED}.pt')
+    dataset = Dataset(type=DATASET)
+    labels_names = dataset.train_dataset.classes
+    p = []
+    for i in range(100):
+        p.append(
+            predict(
+                MODELS_PATH,
+                os.path.join(TEST_FASHION_PATH, "0.png"),
+            )
+        )
+    plot_uncertainty(
+        np.array(p),
+        labels=labels_names,
+        max_n=4,
+        separate=False,
+        img_path=os.path.join(TEST_FASHION_PATH, "0.png"),
+    )
+
+if __name__ == "__main__":
+    # TRAINING
+    # train()
+
+    # TEST
+    # test()
+
+    morph(os.path.join(TEST_FASHION_PATH, "0.png"), os.path.join(TEST_FASHION_PATH, "1003.png"), "data/images/fashion", steps_count=10)
+    # morph(os.path.join(TEST_CIFAR_PATH, "0002.png"), os.path.join(TEST_CIFAR_PATH, "0006.png"), "data/images/cifar", steps_count=10)
