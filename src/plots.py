@@ -113,6 +113,81 @@ def plot_uncertainty(
     plt.show()
 
 
+def plot_morph_uncertainty(
+    probs: [list],
+    probs_count: int,
+    img_count: int,
+    labels: list,
+    img_dir: str,
+    max_n: Optional[int] = None,
+    img_size: int = 32,
+    filepath: Optional[str] = None,
+):
+    """
+    Plot uncertainty based on morphological created images.
+
+    Args:
+        probs (list): List of probabilities.
+        probs_count (int): Number of probabilities.
+        img_count (int): Number of images.
+        labels (list): List of labels.
+        img_dir (str): Directory containing the images.
+        max_n (int, optional): Maximum number of images to plot. Defaults to None.
+        img_size (int, optional): Size of the images. Defaults to 32.
+        filepath (str, optional): Filepath to save the plot. Defaults to None.
+    """
+    n = len(labels)
+    max_n = max_n if max_n else n
+    best_n = list(range(n))
+
+    if max_n != None:
+        sums = np.argsort(np.sum(probs.T, axis=(1, 2)))[::-1]
+        best_n = sums[:max_n]
+
+    legend_handles = []
+    size = 5000
+    colors = plt.cm.get_cmap("jet")(np.linspace(0, 1, max_n))
+
+    plt.figure(figsize=(20, 10))
+    plt.ylim(0, 1.1)
+    plt.xticks(list(range(img_count)), [""] * img_count)
+    plt.ylabel("probability")
+    ax = plt.gca()
+    tick_labels = ax.xaxis.get_ticklabels()
+
+    for step in range(img_count):
+        trans_probs = probs[step].T[best_n, :]
+        for val, p, i in zip(best_n, trans_probs, list(range(max_n))):
+            scatter = plt.scatter(
+                [step] * probs_count,
+                p,
+                color=colors[i],
+                s=size,
+                marker="_",
+                alpha=0.1,
+                label=labels[val],
+            )
+
+            if step == 0:
+                legend_handles.append(scatter)
+
+        img = plt.imread(f"{img_dir}/{step}.png")
+        x_pos = tick_labels[step].get_position()
+        ib = OffsetImage(img, zoom=img_size / img.shape[0])
+        ib.image.axes = ax
+        ab = AnnotationBbox(ib, x_pos, frameon=False, box_alignment=(0.5, 1.2))
+        ax.add_artist(ab)
+
+    legend = plt.legend(handles=legend_handles)
+    for handle in legend.legend_handles:
+        handle.set_sizes([100])
+        handle.set_alpha(1)
+
+    if filepath != None:
+        plt.savefig(filepath)
+    plt.show()
+
+
 def create_probs(n: int):
     probs = []
     for _ in range(n):
