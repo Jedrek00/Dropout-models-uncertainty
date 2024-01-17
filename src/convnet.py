@@ -70,5 +70,6 @@ class ConvNet(nn.Module):
         x = torch.flatten(x, 1)  # flatten all dimensions except batch
 
         # Linear -> Softmax
-        x = F.softmax(self.fc1(x), dim=1)
+        x = self.fc1(x)
+        
         return x
