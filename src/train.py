@@ -242,8 +242,8 @@ def train():
 
 def test():
     RANDOM_SEED = "100"
-    DATASET = "fashion_mnist"
-    MODEL = "densenet"
+    DATASET = "cifar10"
+    MODEL = "convnet"
     DROPOUT_TYPE = "standard"
     DROPOUT_RATE = "0.1"
     MODELS_PATH = os.path.join(
@@ -255,13 +255,13 @@ def test():
     MORPH_STEPS = 10
     REPEAT_COUNT = 100
 
-    image_a = "1003.png"
-    image_b = "0.png"
+    image_a = "0002.png"
+    image_b = "0006.png"
     directory_name = image_a.split(".")[0] + "-morph-" + image_b.split(".")[0]
     morph(
-        os.path.join(TEST_FASHION_PATH, image_a),
-        os.path.join(TEST_FASHION_PATH, image_b),
-        MORPH_FASHION_PATH,
+        os.path.join(TEST_CIFAR_PATH, image_a),
+        os.path.join(TEST_CIFAR_PATH, image_b),
+        MORPH_CIFAR_PATH,
         steps_count=MORPH_STEPS,
     )
 
@@ -275,7 +275,7 @@ def test():
             p[i].append(
                 predict(
                     MODELS_PATH,
-                    os.path.join(MORPH_FASHION_PATH, directory_name, f"{i}.png"),
+                    os.path.join(MORPH_CIFAR_PATH, directory_name, f"{i}.png"),
                 )
             )
 
@@ -284,8 +284,8 @@ def test():
         probs_count=REPEAT_COUNT,
         img_count=MORPH_STEPS,
         labels=labels_names,
-        img_dir=f"{MORPH_FASHION_PATH}/{directory_name}",
-        max_n=2,
+        img_dir=f"{MORPH_CIFAR_PATH}/{directory_name}",
+        max_n=3,
     )
 
 
