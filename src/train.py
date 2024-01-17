@@ -16,17 +16,17 @@ from plots import (
     plot_history,
     plot_confusion_matrix,
     plot_uncertainty,
+    plot_morph_uncertainty,
 )
-from helpers import transform, torch_softmax
+from helpers import transform, torch_softmax, morph
 
 
 DATA_PATH = "data"
 PLOTS_PATH = "plots"
 TEST_CIFAR_PATH = "data/test_data/cifar"
 TEST_FASHION_PATH = "data/test_data/fashion"
-
-
-
+MORPH_CIFAR_PATH = "data/images/cifar"
+MORPH_FASHION_PATH = "data/images/fashion"
 
 
 def train_model(
@@ -125,8 +125,12 @@ def main(model_architecture, dataset_name, dropout_type, dropout_rate, random_se
     dataset = Dataset(type=dataset_name)
     NUM_CHANNELS = dataset.num_channels
     IMG_SIZE = dataset.img_size
-    trainloader = DataLoader(dataset.train_dataset, batch_size=hiperparameters.BATCH_SIZE, shuffle=True)
-    testloader = DataLoader(dataset.test_dataset, batch_size=hiperparameters.BATCH_SIZE, shuffle=False)
+    trainloader = DataLoader(
+        dataset.train_dataset, batch_size=hiperparameters.BATCH_SIZE, shuffle=True
+    )
+    testloader = DataLoader(
+        dataset.test_dataset, batch_size=hiperparameters.BATCH_SIZE, shuffle=False
+    )
     test_labels = np.array(dataset.test_dataset.targets)
     labels_names = dataset.train_dataset.classes
 
@@ -134,7 +138,7 @@ def main(model_architecture, dataset_name, dropout_type, dropout_rate, random_se
     print(f"Number of batches in test set: {len(testloader)}")
 
     # model = torch.load(os.path.join(MODELS_PATH, "model.pt"))
-    if model_architecture == 'densenet':
+    if model_architecture == "densenet":
         model = DenseNet(
             IMG_SIZE * IMG_SIZE * NUM_CHANNELS,
             hiperparameters.NUM_OF_CLASSES,
@@ -142,8 +146,15 @@ def main(model_architecture, dataset_name, dropout_type, dropout_rate, random_se
             dropout_rate,
             dropout_type,
         )
-    elif model_architecture == 'convnet':
-        model = ConvNet(image_channels=NUM_CHANNELS, image_size=IMG_SIZE, filters=[32, 64, 128], kernel_sizes=[(3, 3), (3, 3), (3, 3)], dropout_type=dropout_type, dropout_rate=dropout_rate)
+    elif model_architecture == "convnet":
+        model = ConvNet(
+            image_channels=NUM_CHANNELS,
+            image_size=IMG_SIZE,
+            filters=[32, 64, 128],
+            kernel_sizes=[(3, 3), (3, 3), (3, 3)],
+            dropout_type=dropout_type,
+            dropout_rate=dropout_rate,
+        )
     else:
         print(f'No such model architecture as "{model_architecture}"!')
         return
@@ -202,39 +213,89 @@ def main(model_architecture, dataset_name, dropout_type, dropout_rate, random_se
         mlflow.log_artifact(os.path.join(dir_path, "confusion_matrix.png"))
 
         # TODO save models
-        model_path = os.path.join('models', dataset_name, f'{model_architecture}-{dropout_type}-{dropout_rate}', f'random-seed-{random_seed}.pt')
+        model_path = os.path.join(
+            "models",
+            dataset_name,
+            f"{model_architecture}-{dropout_type}-{dropout_rate}",
+            f"random-seed-{random_seed}.pt",
+        )
         torch.save(model, model_path)
 
-if __name__ == "__main__":
+
+def train():
     for random_seed in hiperparameters.RANDOM_SEEDS:
         for dataset_name in hiperparameters.DATASETS:
             for model_architecture in hiperparameters.MODEL_ARCHITECTURES:
                 for dropout_type in hiperparameters.DROPOUT_TYPES:
                     for dropout_rate in hiperparameters.DROPOUTS_RATES:
-                        print(f'\nTraining:\nRandom seed: {random_seed}\nDataset: {dataset_name}\nModel architecture: {model_architecture}\nDropout type: {dropout_type}\nDropout rate: {dropout_rate}')
-                        main(model_architecture=model_architecture, dataset_name=dataset_name, dropout_type=dropout_type, dropout_rate=dropout_rate, random_seed=random_seed)
+                        print(
+                            f"\nTraining:\nRandom seed: {random_seed}\nDataset: {dataset_name}\nModel architecture: {model_architecture}\nDropout type: {dropout_type}\nDropout rate: {dropout_rate}"
+                        )
+                        main(
+                            model_architecture=model_architecture,
+                            dataset_name=dataset_name,
+                            dropout_type=dropout_type,
+                            dropout_rate=dropout_rate,
+                            random_seed=random_seed,
+                        )
 
-    # RANDOM_SEED = '100'
-    # DATASET = 'fashion_mnist'
-    # MODEL = 'convnet'
-    # DROPOUT_TYPE = 'standard'
-    # DROPOUT_RATE = '0.5'
-    # MODELS_PATH = os.path.join('models', DATASET, f'{MODEL}-{DROPOUT_TYPE}-{DROPOUT_RATE}',
-    #                           f'random-seed-{RANDOM_SEED}.pt')
-    # dataset = Dataset(type=DATASET)
-    # labels_names = dataset.train_dataset.classes
-    # p = []
-    # for i in range(100):
-    #     p.append(
-    #         predict(
-    #             MODELS_PATH,
-    #             os.path.join(TEST_FASHION_PATH, "0.png"),
-    #         )
-    #     )
-    # plot_uncertainty(
-    #     np.array(p),
-    #     labels=labels_names,
-    #     max_n=4,
-    #     separate=True,
-    #     img_path=os.path.join(TEST_FASHION_PATH, "0.png"),
-    # )
+
+def test():
+    RANDOM_SEED = "100"
+    DATASET = "cifar10"
+    MODEL = "convnet"
+    DROPOUT_TYPE = "standard"
+    DROPOUT_RATE = "0.1"
+    MODELS_PATH = os.path.join(
+        "models",
+        DATASET,
+        f"{MODEL}-{DROPOUT_TYPE}-{DROPOUT_RATE}",
+        f"random-seed-{RANDOM_SEED}.pt",
+    )
+    MORPH_STEPS = 10
+    REPEAT_COUNT = 100
+
+    image_a = "0002.png"
+    image_b = "0006.png"
+    directory_name = image_a.split(".")[0] + "-morph-" + image_b.split(".")[0]
+    morph(
+        os.path.join(TEST_CIFAR_PATH, image_a),
+        os.path.join(TEST_CIFAR_PATH, image_b),
+        MORPH_CIFAR_PATH,
+        steps_count=MORPH_STEPS,
+    )
+
+    dataset = Dataset(type=DATASET)
+    labels_names = dataset.train_dataset.classes
+
+    p = []
+    for i in range(MORPH_STEPS):
+        p.append([])
+        for _ in range(REPEAT_COUNT):
+            p[i].append(
+                predict(
+                    MODELS_PATH,
+                    os.path.join(MORPH_CIFAR_PATH, directory_name, f"{i}.png"),
+                )
+            )
+
+    plot_morph_uncertainty(
+        np.array(p),
+        probs_count=REPEAT_COUNT,
+        img_count=MORPH_STEPS,
+        labels=labels_names,
+        img_dir=f"{MORPH_CIFAR_PATH}/{directory_name}",
+        max_n=3,
+    )
+
+
+if __name__ == "__main__":
+    # TRAINING
+    # train()
+
+    # TEST
+    test()
+
+    # MORPH
+    # morph(os.path.join(TEST_FASHION_PATH, "0.png"), os.path.join(TEST_FASHION_PATH, "1003.png"), "data/images/fashion", steps_count=10)
+    # morph(os.path.join(TEST_CIFAR_PATH, "0002.png"), os.path.join(TEST_CIFAR_PATH, "0006.png"), "data/images/cifar", steps_count=10)
