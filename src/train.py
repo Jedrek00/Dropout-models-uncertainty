@@ -255,8 +255,8 @@ def test():
     MORPH_STEPS = 10
     REPEAT_COUNT = 100
 
-    image_a = "0002.png"
-    image_b = "0006.png"
+    image_a = "airplane-0049.png"
+    image_b = "deer-0020.png"
     directory_name = image_a.split(".")[0] + "-morph-" + image_b.split(".")[0]
     morph(
         os.path.join(TEST_CIFAR_PATH, image_a),
