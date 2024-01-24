@@ -122,6 +122,7 @@ def plot_morph_uncertainty(
     max_n: Optional[int] = None,
     img_size: int = 32,
     filepath: Optional[str] = None,
+    plot_title: Optional[str] = None,
 ):
     """
     Plot uncertainty based on morphological created images.
@@ -135,10 +136,12 @@ def plot_morph_uncertainty(
         max_n (int, optional): Maximum number of images to plot. Defaults to None.
         img_size (int, optional): Size of the images. Defaults to 32.
         filepath (str, optional): Filepath to save the plot. Defaults to None.
+        plot_title (str, optional): Title of the plot. Defaults to None.
     """
     n = len(labels)
     max_n = max_n if max_n else n
     best_n = list(range(n))
+    images = img_dir.split("-morph-")
 
     if max_n != None:
         sums = np.argsort(np.sum(probs.T, axis=(1, 2)))[::-1]
@@ -149,6 +152,10 @@ def plot_morph_uncertainty(
     colors = plt.cm.get_cmap("jet")(np.linspace(0, 1, max_n))
 
     plt.figure(figsize=(20, 10))
+    if filepath == None:
+        plt.title(f"{images[0]} into {images[1]}")
+    else:
+        plt.title(plot_title)
     plt.ylim(0, 1.1)
     plt.xticks(list(range(img_count)), [""] * img_count)
     plt.ylabel("probability")
