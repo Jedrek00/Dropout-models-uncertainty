@@ -246,7 +246,7 @@ def test():
     DATASET = "cifar10"
     MODEL = "convnet"
     DROPOUT_TYPE = "standard"
-    DROPOUT_RATE = "0.1"
+    DROPOUT_RATE = "0.5"
     MODELS_PATH = os.path.join(
         "models",
         DATASET,
@@ -256,8 +256,8 @@ def test():
     MORPH_STEPS = 10
     REPEAT_COUNT = 100
 
-    image_a = "airplane-0049.png"
-    image_b = "deer-0020.png"
+    image_a = "ship-0069.png"
+    image_b = "automobile-0004.png"
     directory_name = image_a.split(".")[0] + "-morph-" + image_b.split(".")[0]
     morph(
         os.path.join(TEST_CIFAR_PATH, image_a),
@@ -314,8 +314,11 @@ def generate_plots():
                         TEST_DATA_PATH = f"data/test_data/{dataset}"
 
 
-                        filenames = os.listdir(TEST_DATA_PATH)
-                        image_a, image_b = random.sample(filenames, 2)
+                        # filenames = os.listdir(TEST_DATA_PATH)
+                        # image_a, image_b = random.sample(filenames, 2)
+                        image_a = "ship-0062.png" if dataset == "cifar10" else "0.png"
+                        image_b = "dog-0056.png" if dataset == "cifar10" else "1022.png"
+
                         directory_name = image_a.split(".")[0] + "-morph-" + image_b.split(".")[0]
                         morph(
                             os.path.join(TEST_DATA_PATH, image_a),
@@ -345,7 +348,8 @@ def generate_plots():
                             labels=labels_names,
                             img_dir=f"{MORPH_DATA_PATH}/{directory_name}",
                             max_n=3,
-                            filepath=f"data/plots/{dataset}/{directory_name}-{model}-{type}-{rate}-{seed}.png"
+                            filepath=f"data/plots/uniform/{dataset}/{directory_name}-{model}-{type}-{rate}-{seed}.png",
+                            plot_title=f"{dataset} | {directory_name} | {model} | dropout: {type} | dropout_rate: {rate} | seed: {seed}"
                         )
 
 
