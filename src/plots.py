@@ -185,7 +185,8 @@ def plot_morph_uncertainty(
 
     if filepath != None:
         plt.savefig(filepath)
-    plt.show()
+    else:
+        plt.show()
 
 
 def create_probs(n: int):

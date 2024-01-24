@@ -4,3 +4,4 @@ Notebooks/.ipynb_checkpoints/
 data/*
 *.pyc
 !data/test_data/
+!data/plots/
