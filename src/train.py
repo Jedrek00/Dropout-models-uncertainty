@@ -4,6 +4,7 @@ import numpy as np
 from tqdm import tqdm
 from PIL import Image
 from copy import deepcopy
+import random
 
 import torch
 from torch.utils.data import DataLoader
@@ -23,10 +24,10 @@ from helpers import transform, torch_softmax, morph
 
 DATA_PATH = "data"
 PLOTS_PATH = "plots"
-TEST_CIFAR_PATH = "data/test_data/cifar"
-TEST_FASHION_PATH = "data/test_data/fashion"
-MORPH_CIFAR_PATH = "data/images/cifar"
-MORPH_FASHION_PATH = "data/images/fashion"
+TEST_CIFAR_PATH = "data/test_data/cifar10"
+TEST_FASHION_PATH = "data/test_data/fashion_mnist"
+MORPH_CIFAR_PATH = "data/images/cifar10"
+MORPH_FASHION_PATH = "data/images/fashion_mnist"
 
 
 def train_model(
@@ -288,13 +289,74 @@ def test():
         max_n=3,
     )
 
+def generate_plots():
+    seeds = ["50", "100", "101", "110"]
+    datasets = ["cifar10", "fashion_mnist"]
+    models = ["convnet", "densenet"]
+    dropout_types = {"convnet": ["spatial", "standard"], "densenet": ["drop_connect", "standard"]}
+    dropout_rates = ["0.1", "0.25", "0.5"]
+
+    for seed in seeds:
+        for dataset in datasets:
+            for model in models:
+                for type in dropout_types[model]:
+                    for rate in dropout_rates:
+                        path = os.path.join(
+                            "models",
+                            dataset,
+                            f"{model}-{type}-{rate}",
+                            f"random-seed-{seed}.pt",
+                        )
+
+                        MORPH_STEPS = 10
+                        REPEAT_COUNT = 100
+                        MORPH_DATA_PATH = f"data/images/{dataset}"
+                        TEST_DATA_PATH = f"data/test_data/{dataset}"
+
+
+                        filenames = os.listdir(TEST_DATA_PATH)
+                        image_a, image_b = random.sample(filenames, 2)
+                        directory_name = image_a.split(".")[0] + "-morph-" + image_b.split(".")[0]
+                        morph(
+                            os.path.join(TEST_DATA_PATH, image_a),
+                            os.path.join(TEST_DATA_PATH, image_b),
+                            MORPH_DATA_PATH,
+                            steps_count=MORPH_STEPS,
+                        )
+
+                        model_dataset = Dataset(type=dataset)
+                        labels_names = model_dataset.train_dataset.classes
+
+                        p = []
+                        for i in range(MORPH_STEPS):
+                            p.append([])
+                            for _ in range(REPEAT_COUNT):
+                                p[i].append(
+                                    predict(
+                                        path,
+                                        os.path.join(MORPH_DATA_PATH, directory_name, f"{i}.png"),
+                                    )
+                                )
+
+                        plot_morph_uncertainty(
+                            np.array(p),
+                            probs_count=REPEAT_COUNT,
+                            img_count=MORPH_STEPS,
+                            labels=labels_names,
+                            img_dir=f"{MORPH_DATA_PATH}/{directory_name}",
+                            max_n=3,
+                            filepath=f"data/plots/{dataset}/{directory_name}-{model}-{type}-{rate}-{seed}.png"
+                        )
+
 
 if __name__ == "__main__":
     # TRAINING
     # train()
 
     # TEST
-    test()
+    # test()
+
+    generate_plots()
 
     # MORPH
     # morph(os.path.join(TEST_FASHION_PATH, "0.png"), os.path.join(TEST_FASHION_PATH, "1003.png"), "data/images/fashion", steps_count=10)
