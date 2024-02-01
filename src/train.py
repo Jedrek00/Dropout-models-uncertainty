@@ -243,10 +243,10 @@ def train():
 
 def test():
     RANDOM_SEED = "100"
-    DATASET = "cifar10"
-    MODEL = "convnet"
+    DATASET = "fashion_mnist"
+    MODEL = "densenet"
     DROPOUT_TYPE = "standard"
-    DROPOUT_RATE = "0.5"
+    DROPOUT_RATE = "0.25"
     MODELS_PATH = os.path.join(
         "models",
         DATASET,
@@ -255,14 +255,27 @@ def test():
     )
     MORPH_STEPS = 10
     REPEAT_COUNT = 100
+    params = {
+        "model": MODEL,
+        "dropout_type": DROPOUT_TYPE,
+        "dropout_rate": DROPOUT_RATE,
+        "first_img": "shirt",
+        "second_img": "t-shirt"
+    }
 
-    image_a = "ship-0069.png"
-    image_b = "automobile-0004.png"
+    # image_a = "cat-0009.png"
+    # image_b = "dog-0070.png"
+    
+    # image_a = "horse-0037.png"
+    # image_b = "automobile-0004.png"
+
+    image_a = "Shirt-0164.png"
+    image_b = "T-shirt top-0171.png"
     directory_name = image_a.split(".")[0] + "-morph-" + image_b.split(".")[0]
     morph(
-        os.path.join(TEST_CIFAR_PATH, image_a),
-        os.path.join(TEST_CIFAR_PATH, image_b),
-        MORPH_CIFAR_PATH,
+        os.path.join(TEST_FASHION_PATH, image_a),
+        os.path.join(TEST_FASHION_PATH, image_b),
+        MORPH_FASHION_PATH,
         steps_count=MORPH_STEPS,
     )
 
@@ -276,7 +289,7 @@ def test():
             p[i].append(
                 predict(
                     MODELS_PATH,
-                    os.path.join(MORPH_CIFAR_PATH, directory_name, f"{i}.png"),
+                    os.path.join(MORPH_FASHION_PATH, directory_name, f"{i}.png"),
                 )
             )
 
@@ -285,8 +298,9 @@ def test():
         probs_count=REPEAT_COUNT,
         img_count=MORPH_STEPS,
         labels=labels_names,
-        img_dir=f"{MORPH_CIFAR_PATH}/{directory_name}",
+        img_dir=f"{MORPH_FASHION_PATH}/{directory_name}",
         max_n=3,
+        params=params
     )
 
 def generate_plots():
@@ -358,9 +372,9 @@ if __name__ == "__main__":
     # train()
 
     # TEST
-    # test()
+    test()
 
-    generate_plots()
+    # generate_plots()
 
     # MORPH
     # morph(os.path.join(TEST_FASHION_PATH, "0.png"), os.path.join(TEST_FASHION_PATH, "1003.png"), "data/images/fashion", steps_count=10)

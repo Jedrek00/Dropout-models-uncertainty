@@ -123,6 +123,7 @@ def plot_morph_uncertainty(
     img_size: int = 32,
     filepath: Optional[str] = None,
     plot_title: Optional[str] = None,
+    params: Optional[dict] = None,
 ):
     """
     Plot uncertainty based on morphological created images.
@@ -153,7 +154,10 @@ def plot_morph_uncertainty(
 
     plt.figure(figsize=(20, 10))
     if filepath == None:
-        plt.title(f"{images[0]} into {images[1]}")
+        if params != None:
+            plt.title(f"{params['first_img']} into {params['second_img']} | model: {params['model']} | type: {params['dropout_type']} | rate: {params['dropout_rate']}")
+        else:
+            plt.title(f"{images[0]} into {images[1]}")
     else:
         plt.title(plot_title)
     plt.ylim(0, 1.1)
