@@ -15,27 +15,31 @@ class ConvNet(nn.Module):
                  kernel_sizes: list = [(3, 3), (3, 3), (3, 3)],
                  dropout_type: Optional[str] = "standard",
                  dropout_rate: float = 0.1):
-        if len(filters) != 3:
-            raise Exception('Use 3 filters!')
-        if len(kernel_sizes) != 3:
-            raise Exception('Use 3 kernel sizes!')
-
-        self.valid = True
-        if dropout_type is None:
-            self.any_dropout = False
-        else:
-            self.any_dropout = True
-            if dropout_type not in ["standard", "spatial"]:
-                print(f'''Can't use "{dropout_type}" as dropout type for convnet!''')
-                self.valid = False
-            self.dropout_type = dropout_type
-
+        """
+        Simple neural network with fully connected layers for image classification.
+        :param input_dim: size of the input, calculated as img_size * img_size * number_of_channels.
+        :param output_dim: number of classes.
+        :param hidden_dims: list of integers with number of neurons in hidden layers.
+        :param drop_rate: probability of dropout.
+        :param dropout_type: pass 'drop_connect' to use Drop Connect, pass 'standard' to use Standard Dropout (default option).
+        """
         super().__init__()
-
+        
+        self.dropout_type = dropout_type
+        self.dropout_rate = dropout_rate
+        if self.dropout_type is not None:
+            if self.dropout_type not in ["standard", "spatial"]:
+                raise DropoutTypeException(f"Can't use '{dropout_type}' as dropout type for convnet!")
+            
         if self.dropout_type == "standard":
             self.dropout_layer = nn.Dropout(dropout_rate)
         elif self.dropout_type == 'spatial':
             self.dropout_layer = nn.Dropout2d(dropout_rate)
+
+        if len(filters) != 3:
+            raise Exception('Use 3 filters!')
+        if len(kernel_sizes) != 3:
+            raise Exception('Use 3 kernel sizes!')
         
         self.image_size = image_size
 
@@ -50,26 +54,26 @@ class ConvNet(nn.Module):
         x = self.pool(F.relu(self.conv1(x)))
 
         # First dropout
-        if self.any_dropout:
+        if self.dropout_type is not None:
             x = self.dropout_layer(x)
 
         # conv -> ReLU -> MaxPool
         x = self.pool(F.relu(self.conv2(x)))
 
         # Second dropout
-        if self.any_dropout:
+        if self.dropout_type is not None:
             x = self.dropout_layer(x)
 
         # conv -> ReLU -> MaxPool
         x = self.pool(F.relu(self.conv3(x)))
 
         # Third dropout
-        if self.any_dropout:
+        if self.dropout_type is not None:
             x = self.dropout_layer(x)
 
         x = torch.flatten(x, 1)  # flatten all dimensions except batch
 
-        # Linear -> Softmax
-        x = self.fc1(x)
+        # Linear
+        out = self.fc1(x)
         
-        return x
+        return out
