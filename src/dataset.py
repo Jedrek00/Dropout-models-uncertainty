@@ -15,7 +15,7 @@ class Dataset:
         "fashion_mnist": {"directory": "FashionMNIST", "instance": datasets.FashionMNIST},
     }
 
-    def __init__(self, type="cifar"):
+    def __init__(self, type="cifar10"):
         if type not in self.TYPES:
                 raise DatasetTypeException(f"There are two valid datasets: 'cifar10' and 'fashion_mnist', you passed {type}!")
         self.dataset_info = Dataset.TYPES[type]

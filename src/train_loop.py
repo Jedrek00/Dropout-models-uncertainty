@@ -18,6 +18,18 @@ def train_model(
     device: str,
     test_labels: np.ndarray,
 ):
+    """
+    Torch train loop.
+
+    :param model: Torch model to train.
+    :param optimizer: Torch optimizer.
+    :param train_dataloader: Dataloader with train data.
+    :param test_dataloader: Dataloader with test data.
+    :param epochs: Number of epochs.
+    :param device: Pass 'cpu' to use CPU, or GPU name to train on GPU.
+    :param test_labels: array with correct labels for test data. 
+    :return: dictionary with stats from training and best model.
+    """
     loss_fn = torch.nn.CrossEntropyLoss()
     history = {
         "train_loss": [],
@@ -84,6 +96,13 @@ def train_model(
 
 
 def predict(model_path: str, image_path: str) -> np.ndarray:
+    """
+    Make prediction on the single image.
+
+    :param model_path: Path to the trained model.
+    :param image_path: Path to the image.
+    :return: Array with the prediction made by the model in form of probabilities.
+    """
     model = torch.load(model_path, map_location=torch.device("cpu"))
     model.to("cpu")
     model.train()

@@ -12,6 +12,7 @@ class DenseNet(nn.Module):
     def __init__(self, input_dim: int, output_dim: int, hidden_dims: list[int], dropout_type: Optional[str] = "standard", dropout_rate: float = 0.1):
         """
         Simple neural network with fully connected layers for image classification.
+        
         :param input_dim: size of the input, calculated as img_size * img_size * number_of_channels.
         :param output_dim: number of classes.
         :param hidden_dims: list of integers with number of neurons in hidden layers.

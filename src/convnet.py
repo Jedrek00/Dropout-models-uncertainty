@@ -16,12 +16,14 @@ class ConvNet(nn.Module):
                  dropout_type: Optional[str] = "standard",
                  dropout_rate: float = 0.1):
         """
-        Simple neural network with fully connected layers for image classification.
-        :param input_dim: size of the input, calculated as img_size * img_size * number_of_channels.
-        :param output_dim: number of classes.
-        :param hidden_dims: list of integers with number of neurons in hidden layers.
+        Simple convolutional network for image classification.
+        
+        :param image_channels: number of channels of images from dataset.
+        :param image_size: size of the images from the dataset (images should be a square).
+        :param filters: number of filters in each conv layer.
+        :param kernel_size: size of the kernel in each conv layer.
         :param drop_rate: probability of dropout.
-        :param dropout_type: pass 'drop_connect' to use Drop Connect, pass 'standard' to use Standard Dropout (default option).
+        :param dropout_type: pass 'spatial' to use Dropout2d, pass 'standard' to use Dropout (default option).
         """
         super().__init__()
         

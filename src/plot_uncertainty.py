@@ -14,14 +14,14 @@ MORPH_DIR = "data/images"
 
 def test(model_path: str, dataset: str, image_a: str, image_b: str, morph_steps: int, repeat_count: int):
     """
-    Create plot showing uncertainty in model predicitons.
+    Create plot showing uncertainty in model predictions.
     
     :param model_path: path to the model which will be used to make predictions.
-    :param dataset: Name of the dataset from whihc images are taken, vlaid options: "cifar10" and "fashion_mnist.
+    :param dataset: Name of the dataset from which images are taken, valid options: "cifar10" and "fashion_mnist.
     :param image_a: Name of the first file with image from "data/test_data/{dataset} location.
     :param image_b: Name of the second file with image from "data/test_data/{dataset} location.
     :param morph_steps: Number of steps during morph operation.
-    :param repeat_count: How many times prediciotn for one morphed image should be done.
+    :param repeat_count: How many times prediction for one morphed image should be done.
     :return: None
     """
     dataset_dir = "cifar10" if dataset == "cifar10" else "fashion_mnist"
@@ -54,11 +54,11 @@ def test(model_path: str, dataset: str, image_a: str, image_b: str, morph_steps:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_path', type=str, help='path to the model which will be used to make predictions.')
-    parser.add_argument('--dataset', type=str, choices=["cifar10", "fashion_mnist"], help='Name of the dataset from whihc images are taken, vlaid options: "cifar10" and "fashion_mnist"')
+    parser.add_argument('--dataset', type=str, choices=["cifar10", "fashion_mnist"], help='Name of the dataset from which images are taken, valid options: "cifar10" and "fashion_mnist"')
     parser.add_argument('--image_a', type=str, help='Name of the first file with image from "data/test_data/{dataset} location."')
     parser.add_argument('--image_b', type=str, help='Name of the second file with image from "data/test_data/{dataset} location."')
     parser.add_argument('--morph_steps', type=int, help='Number of steps during morph operation.')
-    parser.add_argument('--repeat_count', type=int, help='How many times prediciotn for one morphed image should be done.')
+    parser.add_argument('--repeat_count', type=int, help='How many times prediction for one morphed image should be done.')
     args = parser.parse_args()
     args = vars(args)
     test(**args)
