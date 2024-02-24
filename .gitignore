@@ -5,3 +5,5 @@ data/*
 *.pyc
 !data/test_data/
 !data/plots/
+mlruns3/*
+models/*
