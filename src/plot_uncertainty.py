@@ -3,7 +3,7 @@ import argparse
 import numpy as np
 
 from dataset import Dataset
-from train_loop import predict
+from train_loop import multiple_predictions
 from plots import plot_morph_uncertainty
 from helpers import morph
 
@@ -12,7 +12,7 @@ DATA_DIR = "data/test_data"
 MORPH_DIR = "data/images"
 
 
-def test(model_path: str, dataset: str, image_a: str, image_b: str, morph_steps: int, repeat_count: int):
+def test(model_path: str, dataset: str, image_a: str, image_b: str, morph_steps: int, repeat_count: int, device: str):
     """
     Create plot showing uncertainty in model predictions.
     
@@ -39,7 +39,8 @@ def test(model_path: str, dataset: str, image_a: str, image_b: str, morph_steps:
     predictions = []
     for i in range(morph_steps):
         file_path = os.path.join(MORPH_DIR, dataset_dir, morph_dir_name, f"{i}.png")
-        predictions.append([predict(model_path, file_path) for _ in range(repeat_count)])
+        # predictions.append([predict(model_path, file_path) for _ in range(repeat_count)])
+        predictions.append(multiple_predictions(model_path, file_path, device, repeat_count))
 
     plot_morph_uncertainty(
         np.array(predictions),
@@ -59,6 +60,7 @@ if __name__ == "__main__":
     parser.add_argument('--image_b', type=str, help='Name of the second file with image from "data/test_data/{dataset} location."')
     parser.add_argument('--morph_steps', type=int, help='Number of steps during morph operation.')
     parser.add_argument('--repeat_count', type=int, help='How many times prediction for one morphed image should be done.')
+    parser.add_argument('--device', type=str, help='Pass "cpu" to use CPU, or GPU name to train on GPU.')
     args = parser.parse_args()
     args = vars(args)
     test(**args)

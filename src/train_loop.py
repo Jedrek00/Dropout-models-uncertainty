@@ -95,21 +95,26 @@ def train_model(
     return history, best_model
 
 
-def predict(model_path: str, image_path: str) -> np.ndarray:
+def multiple_predictions(model_path: str, image_path: str, device: str, n: int):
     """
-    Make prediction on the single image.
+    Make multiple prediction on the single image.
 
     :param model_path: Path to the trained model.
     :param image_path: Path to the image.
+    :param device: Pass "cpu" to use CPU, or GPU name to train on GPU.
+    :param n: how many predictions should be made on given image.
     :return: Array with the prediction made by the model in form of probabilities.
     """
-    model = torch.load(model_path, map_location=torch.device("cpu"))
-    model.to("cpu")
-    model.train()
+    model = torch.load(model_path)
+    model.to(device)
+    model.train() # we want different prediction each time
     img = Image.open(image_path)
     img = transform(img)
-    img = torch.unsqueeze(img, 0)
+    img = torch.unsqueeze(img, 0).to(device)
+    probs_list = []
     with torch.no_grad():
-        logits = model(img)
-        probs = torch_softmax(logits)
-    return probs.numpy()[0]
+        for _ in range(n):
+            logits = model(img)
+            probs = torch_softmax(logits)
+            probs_list.append(probs.to("cpu").numpy()[0])
+    return probs_list
