@@ -62,3 +62,10 @@ Run MLFlow tool inside virtual environment created by poetry:
 ```
 mlflow ui
 ```
+
+## Example results
+The chart below illustrates the performance of our algorithm for arbitrarily chosen hyperparameters. This is a perfect example of correctly modeling uncertainty using the dropout technique. 
+
+![Modelling uncertainty example plot](data/plots/fashion_mnist/0-morph-1022-densenet-drop_connect-0.1-50.png) 
+
+Our project allows user to generate its own, custom charts for user-selected hyperparameters.
