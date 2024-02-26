@@ -11,10 +11,7 @@ from dataset import Dataset
 from convnet import ConvNet
 from densenet import DenseNet
 from train_loop import train_model
-from plots import (
-    plot_history,
-    plot_confusion_matrix,
-)
+from visualizations import plot_history, plot_confusion_matrix
 
 PLOTS_PATH = "plots"
 

@@ -4,7 +4,7 @@ import numpy as np
 
 from dataset import Dataset
 from train_loop import multiple_predictions
-from plots import plot_morph_uncertainty
+from visualizations import plot_morph_uncertainty
 from helpers import morph
 
 
@@ -48,7 +48,7 @@ def test(model_path: str, dataset: str, image_a: str, image_b: str, morph_steps:
         img_count=morph_steps,
         labels=labels_names,
         img_dir=os.path.join(MORPH_DIR, dataset_dir, morph_dir_name),
-        max_n=3,
+        max_display=3,
     )
 
 
