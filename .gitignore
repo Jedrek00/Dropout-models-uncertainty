@@ -7,3 +7,4 @@ data/*
 !data/plots/
 mlruns3/*
 models/*
+plots/*
