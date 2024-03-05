@@ -8,3 +8,4 @@ data/*
 mlruns3/*
 models/*
 plots/*
+!plots/.gitkeep
