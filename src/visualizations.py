@@ -140,9 +140,10 @@ def plot_morph_uncertainty(
     labels: list,
     img_dir: str,
     max_display: Optional[int] = None,
-    img_size: int = 32,
+    img_size: int = 48,
     save_path: Optional[str] = None,
     plot_title: Optional[str] = None,
+    title_size: int = 28,
 ):
     """
     Plot uncertainty based on morphological created images.
@@ -156,12 +157,15 @@ def plot_morph_uncertainty(
     :param img_size (int, optional): Size of the images. Defaults to 32.
     :param save_path (str, optional): Filepath to save the plot. Defaults to None.
     :param plot_title (str, optional): Title of the plot. Defaults to None.
+    :param title_size (int, optional): Size of the title. Defaults to 28.
     :return: None
     """
     num_labels = len(labels)
     max_display = max_display if max_display else num_labels
     best_indices = list(range(num_labels))
     image_categories = img_dir.split("-morph-")
+
+    plt.rcParams.update({"ytick.labelsize": 18})
 
     if max_display is not None:
         sums = np.argsort(np.sum(probs.T, axis=(1, 2)))[::-1]
@@ -172,14 +176,14 @@ def plot_morph_uncertainty(
     colors = plt.cm.get_cmap("jet")(np.linspace(0, 1, max_display))
 
     plt.figure(figsize=(20, 10))
-    if plot_title is None:
-        plt.title(f"{image_categories[0]} into {image_categories[1]}")
+    if plot_title is not None:
+        plt.title(plot_title, fontsize=title_size)
     else:
-        plt.title(plot_title)
+        plt.title(f"{image_categories[0]} into {image_categories[1]}", fontsize=title_size)
     
     plt.ylim(0, 1.1)
     plt.xticks(list(range(img_count)), [""] * img_count)
-    plt.ylabel("Probability")
+    plt.ylabel("Probability", fontsize=20)
     ax = plt.gca()
     tick_labels = ax.xaxis.get_ticklabels()
 
@@ -206,9 +210,9 @@ def plot_morph_uncertainty(
         annotation_box = AnnotationBbox(image_box, x_position, frameon=False, box_alignment=(0.5, 1.2))
         ax.add_artist(annotation_box)
 
-    legend = plt.legend(handles=legend_handles)
+    legend = plt.legend(handles=legend_handles, fontsize=18)
     for handle in legend.legend_handles:
-        handle.set_sizes([100])
+        handle.set_sizes([500])
         handle.set_alpha(1)
 
     if save_path is not None:
