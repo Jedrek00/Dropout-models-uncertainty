@@ -5,5 +5,7 @@ data/*
 *.pyc
 !data/test_data/
 !data/plots/
-mlruns3/*
+mlruns/*
 models/*
+plots/*
+!plots/.gitkeep
